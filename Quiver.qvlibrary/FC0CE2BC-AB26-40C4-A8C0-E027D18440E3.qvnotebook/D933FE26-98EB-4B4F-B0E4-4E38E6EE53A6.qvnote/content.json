@@ -1,0 +1,9 @@
+{
+  "title": "Untitled Note",
+  "cells": [
+    {
+      "type": "text",
+      "data": "<div>&nbsp;   Apache Tomcat 服务器是一个开源的，基于Java的web应用容器，可以用来运行Servlet以及JSP。它曾是Apach-Jakarta的一个子项目；不过，由于Tomcat是在很流行，他现在被当成Apache的一个单独项目，由Java开源社区的一群志愿者维护。</div><div><br></div><div>&nbsp;   Apache Tomcat非常稳定，并且拥有一个商业web服务器的所有功能，但是仍旧使用\"开源Apache证书\"。它的每个版本都对应一个特定的Java Servlet API，JSP，以及JDK的版本。</div>"
+    }
+  ]
+}
