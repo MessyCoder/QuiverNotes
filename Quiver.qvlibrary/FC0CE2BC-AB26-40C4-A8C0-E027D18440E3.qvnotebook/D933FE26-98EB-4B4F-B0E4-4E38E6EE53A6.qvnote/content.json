@@ -1,9 +1,40 @@
 {
-  "title": "Untitled Note",
+  "title": "第一章 Apache Tomcat 7介绍",
   "cells": [
     {
       "type": "text",
-      "data": "<div>&nbsp;   Apache Tomcat 服务器是一个开源的，基于Java的web应用容器，可以用来运行Servlet以及JSP。它曾是Apach-Jakarta的一个子项目；不过，由于Tomcat是在很流行，他现在被当成Apache的一个单独项目，由Java开源社区的一群志愿者维护。</div><div><br></div><div>&nbsp;   Apache Tomcat非常稳定，并且拥有一个商业web服务器的所有功能，但是仍旧使用\"开源Apache证书\"。它的每个版本都对应一个特定的Java Servlet API，JSP，以及JDK的版本。</div>"
+      "data": "<h1>关于Apache Tomcat服务器</h1><div>Apache Tomcat 服务器是一个开源的，基于Java的web应用容器，可以用来运行Servlet以及JSP。它曾是Apach-Jakarta的一个子项目；不过，由于Tomcat是在很流行，他现在被当成Apache的一个单独项目，由Java开源社区的一群志愿者维护。</div><div><br></div><div>Apache Tomcat非常稳定，并且拥有一个商业web服务器的所有功能，但是仍旧使用\"开源Apache证书\"。它的每个版本都对应一个特定的Java Servlet API，JSP，以及JDK的版本。<code></code></div><div><br></div><div>Apache Tomcat 7 目前支持Servlet API 3.0 ， JSP API 2.0， JDK 1.6。</div><div><br></div><h2>Tomcat Manager<br></h2><div>Tomcat服务器自带Tomcat Manager应用，通过/manager上下文路径可以访问到它。该应用提供了对运行在服务器上的诸多应用的最基础的管理功能，比如<b><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">安装</font></b>，<b>开始</b>，<b>移除</b>，<b>停止</b>，<b>报告</b>等等。</div><h2>Realm 实现</h2><div>Tomcat服务器为了保护容器的资源引入了【Realm（域）】的概念。Realm简单来说就是用户信息数据库，容器可以使用这些数据库来验证用户。我们主要讲两种Tomcat服务器所支持的Realm模型，MemoryRealm和JDBCRealm。<span style=\"line-height: 1.4;\">MemoryRealm是将用户信息直接存储在某个文件上的管理方式，而</span><span style=\"line-height: 1.4;\">JDBCRealm则使用关系型数据库来管理用户。</span></div><h2>Tomcat 社区和论坛</h2><div>有机会就瞅瞅www.tomcatexpert.com这个网站。</div><div><br></div>"
+    },
+    {
+      "type": "text",
+      "data": "<h1>Tomcat的架构</h1><div>Tomcat容器的最顶层组件就是Tomcat的服务器，一个JVM实例中仅能存在一个Tomcat服务器的实例。Tomcat实例由各种小容器组合而成，这其中最重要的是Catalina Servlet引擎：</div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<Server>\r\n    <Service>\r\n        <Connector />\r\n        <Engine>\r\n            <Host>\r\n                <Context> </Context>\r\n            </Host>\r\n        </Engine>\r\n    </Service>\r\n</Server>"
+    },
+    {
+      "type": "text",
+      "data": "<div>其中的Server， Service，Connector等都称作容器。默认情况下，这些容器都是由server.xml文件所配置的。</div><h2>Server</h2><div>Server代表的是Tomcat服务器实例。&lt;Server&gt;元素下可以包含一个或多个&nbsp;&lt;Service&gt;容器。</div><h2>Service<br></h2><div>Service中有多个Connector容器和一个Engine容器。</div><h2>Connector<br></h2><div>Connector中定义了实际处理客户端请求和响应的类。</div><h2>Engine<br></h2><div>一个Service容器中金能有一个Engine，引擎处理所有Connector接收到的请求。</div><h2>Host</h2><div><div style=\"color: rgb(221, 221, 221);\">Host是定义虚拟主机的地方。每一个Host都可以是一个或多个Web应用的父容器。</div></div><h2>Context<br></h2><div>一个Context代表一个Web应用。</div><div><br></div><h1>安装和配置Tomcat</h1><div>安装之前先确认一下Tomcat的前提条件。</div><div><span style=\"line-height: 1.4;\"><br></span></div><div><span style=\"line-height: 1.4;\">下载软件：</span></div><div><ol><li><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\">在</span><span style=\"line-height: 1.4;\">http://tomcat.apache.org</span><span style=\"line-height: 1.4;\">&nbsp;下载Tomcat。</span></li><li><span style=\"line-height: 1.4;\">在www.java.com/en/download/index.jsp 下载Java 1.6</span></li><ol><li><span style=\"line-height: 1.4;\">如果是在Ubuntu下：</span><span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 1.4;\">sudo apt-get install sun-java6-jdk</span></li></ol></ol><div><font color=\"#cccccc\">设置环境变量：</font></div></div><div><ol><li><font color=\"#cccccc\">设置 JAVA_HOME 为JDK的根目录。</font></li><li><font color=\"#cccccc\">设置&nbsp;</font>CATALINA_HOME 为Tomcat的根目录。</li></ol><div><br></div><div>Tomcat默认会接收来自8080端口的请求，如果要改变该默认设置需要修改&nbsp;CATALINA_HOME/conf/server.xml 文件。</div><div>找到下面的代码片段：</div></div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<!-- Define a non-SSL HTTP/1.1 Connector on port 8080 -->\r\n<Connector className=\"org.apache.catalina.connector.http.HttpConnector\" port=\"8080\"\r\nminProcessors=\"5\" maxProcessors=\"75\" acceptCount=\"10\" debug=\"0\"/>"
+    },
+    {
+      "type": "text",
+      "data": "中的port = \"8080\" 改为：port = \"80\""
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<!-- Define a non-SSL HTTP/1.1 Connector on port 80 -->\r\n<Connector className=\"org.apache.catalina.connector.http.HttpConnector\" port=\"80\"\r\nminProcessors=\"5\" maxProcessors=\"75\" acceptCount=\"10\" debug=\"0\"/>"
+    },
+    {
+      "type": "text",
+      "data": "<div>更改之后重新启动服务器以使修改生效。</div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div><div><br></div>"
     }
   ]
 }

@@ -1,0 +1,35 @@
+{
+  "title": "第二章 在Tomcat上部署Web应用",
+  "cells": [
+    {
+      "type": "text",
+      "data": "<h1>启动相关</h1>Tomcat的bin目录下是诸多的可执行脚本文件，这其中最重要的是catalina.sh脚本。该脚本用于启动和停止Tomcat服务器。它可以根据不同的命令行参数而执行不同的操作，比如，启动服务器可以使用：<div><ul><li><span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 1.4;\">catalina start 在另一个进程中启动Tomcat。</span></li><li><span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 1.4;\">catalina run 在当前进程中启动Tomcat。</span></li></ul></div><div><code>​</code>​停止服务器可以使用：</div><div><ul><li><span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 1.4; background-color: rgba(255, 255, 255, 0.0980392); color: rgb(221, 221, 221);\">catalina stop</span><br></li></ul></div><div>启动安全管理器的情况下需要使用 -security 参数。</div><div>Tomcat支持用来设置JVM运行时参数的JAVA_OPTS环境变量，比如设置默认文件编码：</div><div><code>export JAVA_OPTS=\"-Dfile.encoding=utf-8\"</code><br></div><div><br></div><div>如果怕影响其他应用程序，可以使用单独为Tomcat设置的环境变量：</div><div><code>export CATALINA_OPTS=\" –Xms256m -Xmx1g -XX:MaxPermSize=256m\"</code><br></div><div><br></div><div><br></div><h1>主配置文件</h1><div>Tomcat的主配置文件是在conf目录下的server.xml文件。 &nbsp;context.xml文件中记录了一些默认的context设置，这些设置可以在所有的Tomcat应用中共享。除了这些全局设置以外，一个Web应用还可以有自己独享的context设置，设置的方法需要使用Web应用所在的虚拟主机名和引擎名，最终该独享的文件的完全路径为：</div><div><code>CATALINA_HOME/conf/ENGINE_NAME/HOST_NAME/CONTEXT_NAME.xml</code><br></div><div><br></div><h1>Web应用的目录结构</h1><div></div><code></code><code>/</code><div><code>/WEB-INF</code></div><div><code>/WEB-INF/classes</code></div><div><code>/WEB-INF/lib</code><div><code></code><div><span style=\"color: rgb(221, 221, 221);\"></span><br></div><div><span style=\"line-height: 1.4;\">Web应用的部署描述符文件也是很重要的，它是一个叫做web.xml的XML文件。它的放置目录为：</span><br></div><div><code>/WEB-INF/web.xml</code></div><div><br></div><div>下面是一个简化的例子：</div></div></div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<web-app>\r\n  \r\n    <display-name>Apress Demo</display-name>\r\n    \r\n    <servlet>\r\n        <servlet-name>TestServlet</servlet-name>\r\n        <servlet-class>com.apress.TestServlet</servlet-class>\r\n        <load-on-startup>1</load-on-startup>\r\n        <init-param>\r\n            <param-name>name</param-name>\r\n            <param-value>value</param-value>\r\n        </init-param>\r\n    </servlet>\r\n    \r\n    <session-timeout>30</session-timeout>\r\n    \r\n</web-app>"
+    },
+    {
+      "type": "text",
+      "data": "<div>在上面的例子中，我们设置了3个应用级别上的元素：</div><div><ol><li>设置了应用的显示名为Apress Demo。该设置并不触发任何动作。</li><li>设置了一个Servlet，并且为该Servlet添加了初始化参数。</li><li>设置了回话状态的有效持续时间。</li></ol><h1>手动部署Web应用</h1></div><div>假设现在手里有一个apress文件夹，其中已经创建好了Web应用的结构：</div><div><div></div><code>/apress</code></div><div><code>/apress/WEB-INF</code></div><div><code>/apress/WEB-INF/classes</code></div><div><code>/apress/WEB-INF/lib</code><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\"></span></div></div><div><code>​</code>​<br></div><div>现在，创建一个空的，但是完整的web.xml部署描述符文件：</div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n<web-app \r\n  xmlns=\"http://java.sun.com/xml/ns/javaee\"\r\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd\"\r\n  version=\"3.0\">\r\n  \r\n</web-app>"
+    },
+    {
+      "type": "text",
+      "data": "在应用的根目录下，创建一些子目录来区分静态文件：<div><div></div><code>/apress/images/</code></div><div><code>/apress/scripts/</code></div><div><code>/apress/styles/</code><div></div></div>"
+    },
+    {
+      "type": "text",
+      "data": "<div>现在，如果将某个图像文件logo.jpg放置到/apress/images/中去，那么通过在浏览器中访问下面的URL就会获取到该图像：</div><div><code>http://localhost:8080/apress/images/logo.jpg</code></div><div><br></div><div>图像文件会直接在浏览器中显示出来，通过该方式你还可以访问其他子目录下的其它文件。只不过，WEB-INF下文件夹是不公开的，因此无法通过浏览器直接获取到。尝试访问其内的文件会得到一个404结果。</div>"
+    },
+    {
+      "type": "text",
+      "data": ""
+    }
+  ]
+}
