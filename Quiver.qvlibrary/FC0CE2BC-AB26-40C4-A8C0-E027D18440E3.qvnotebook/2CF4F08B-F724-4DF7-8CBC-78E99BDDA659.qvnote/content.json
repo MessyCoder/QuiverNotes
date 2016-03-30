@@ -1,0 +1,9 @@
+{
+  "title": "第三章 Servlet，JSP，ServletContext",
+  "cells": [
+    {
+      "type": "text",
+      "data": "<h1>Servlet</h1><div><br></div><div>Servlet框架由两个Java包构成：javax.servlet 和 javax.servlet.http。</div><div>javax.servlet 中是所有Servlet所必须扩展和实现的通用接口定义； javax.servlet.http 是Servlet框架针对HTTP协议作出的具体实现。<br></div><div>这里面最重要的一个类是javax.servlet.Servlet，它是所有Servlet的基类，是所谓的Servlet接口，它定义了5个Servlet所必有的方法</div>"
+    }
+  ]
+}
