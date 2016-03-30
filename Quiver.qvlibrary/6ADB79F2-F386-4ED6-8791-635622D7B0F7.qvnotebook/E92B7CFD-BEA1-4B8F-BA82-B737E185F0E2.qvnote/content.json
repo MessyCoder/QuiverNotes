@@ -1,0 +1,56 @@
+{
+  "title": "APK的签名",
+  "cells": [
+    {
+      "type": "text",
+      "data": "在Debug模式下，Android SDK工具会使用一个Debug证书对APK进行签名。该证书的私钥的密码是公开的，所以每次更改代码之中IDE都不会管你要密码。<div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\"><br></span></div><div><span style=\"line-height: 1.4;\">（Android Studio会在你Run或者Debug项目的时候，自动进行签名）。</span><br></div><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\"><br></span></div><div><span style=\"line-height: 1.4; background-color: rgb(254, 250, 0);\"><font color=\"#323232\"></font></span>Debug模式下的证书存放在$HO<span style=\"font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; widows: 1; line-height: 1.4;\"><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\"></font>ME/.android/debug.keystore里面： &nbsp;</span></div>"
+    },
+    {
+      "type": "code",
+      "language": "sh",
+      "data": "Pans-MacBook-Pro:sdk pan$ ls -al ~/.android/\ntotal 88\ndrwxr-xr-x   5 pan  staff   544 Mar  7 11:27 .\ndrwxr-xr-x+ 26 pan  staff  1122 Mar 30 14:19 ..\n-rw-r--r--   1 pan  staff    11 Mar  7 11:27 .emu-update-last-check\n-rw-r--r--   1 pan  staff   123 Jan  6 10:43 adb_usb.ini\n-rw-------   1 pan  staff  1704 Oct  7 11:12 adbkey\n-rw-r--r--   1 pan  staff   727 Oct  7 11:12 adbkey.pub\n-rw-r--r--   1 pan  staff   131 Mar 15 18:35 androidwin.cfg\ndrwxr-xr-x   5 pan  staff   238 Dec 15 14:41 avd\ndrwxr-xr-x   2 pan  staff   816 Oct  7 11:19 cache\n-rw-r--r--   1 pan  staff   130 Mar 29 14:32 ddms.cfg\n-rw-r--r--   1 pan  staff  1268 Aug 21  2015 debug.keystore\n-rw-r--r--   1 pan  staff   759 Dec 15 14:28 default.keyset\n-rwxr-xr-x   1 pan  staff   171 Mar  7 11:26 modem-nv-ram-5554\ndrwxr-xr-x   3 pan  staff   102 Oct 26 11:04 monitor-workspace\n-rw-r--r--   1 pan  staff    79 Mar 15 18:35 repositories.cfg\n-rw-r--r--   1 pan  staff  1010 Oct  7 12:04 sites-settings.cfg"
+    },
+    {
+      "type": "text",
+      "data": "Gradle的配置文件中，Debug构建类型所使用的SigningConfig默认就指向这里。<span style=\"color: rgb(0, 102, 0); font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; widows: 1; background-color: rgb(247, 247, 247);\"></span>"
+    },
+    {
+      "type": "text",
+      "data": "在Release模式下，你需要使用自己的证书来给App签名。<div><ul><li>创建KeyStore，并将其放在一个安全的地方。</li><li>创建私钥，该私钥将代表你的公司或个人。</li><li>在安卓项目的构建文件中，为app模块添加签名配置：</li></ul></div>"
+    },
+    {
+      "type": "code",
+      "language": "groovy",
+      "data": "android {\n    ...\n    defaultConfig { ... }\n    signingConfigs {\n        release {\n            storeFile file(\"myreleasekey.keystore\") //相对于当前构建文件的路径\n            storePassword \"password\"\n            keyAlias \"MyReleaseKey\"\n            keyPassword \"password\"\n        }\n    }\n    buildTypes {\n        release {\n            ...\n            signingConfig signingConfigs.release\n        }\n    }\n}"
+    },
+    {
+      "type": "text",
+      "data": "之后，通过执行<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">assembleRelease</font></code>之后就会在<span style=\"font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; widows: 1;\"><code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">app/build/apk/</font></code><font><font>目录下获取到签名的apk文件</font><font color=\"#006600\" style=\"background-color: rgb(247, 247, 247);\">：</font></font></span><span style=\"color: rgb(0, 102, 0); font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; widows: 1; background-color: rgb(247, 247, 247);\"><code>app-release.apk</code></span>"
+    },
+    {
+      "type": "text",
+      "data": "只不过，在构建文件中直接写出密码是不安全的。你可以在构建时输入密码："
+    },
+    {
+      "type": "code",
+      "language": "groovy",
+      "data": "storePassword System.console().readLine(\"\\nKeystore password: \")\nkeyPassword System.console().readLine(\"\\nKey password: \")"
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    }
+  ]
+}

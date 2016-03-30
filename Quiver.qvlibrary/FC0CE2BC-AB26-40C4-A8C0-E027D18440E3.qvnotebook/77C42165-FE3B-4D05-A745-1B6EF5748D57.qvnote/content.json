@@ -25,11 +25,55 @@
     },
     {
       "type": "text",
-      "data": "<div>现在，如果将某个图像文件logo.jpg放置到/apress/images/中去，那么通过在浏览器中访问下面的URL就会获取到该图像：</div><div><code>http://localhost:8080/apress/images/logo.jpg</code></div><div><br></div><div>图像文件会直接在浏览器中显示出来，通过该方式你还可以访问其他子目录下的其它文件。只不过，WEB-INF下文件夹是不公开的，因此无法通过浏览器直接获取到。尝试访问其内的文件会得到一个404结果。</div>"
+      "data": "<div>现在，如果将某个图像文件logo.jpg放置到/apress/images/中去，那么通过在浏览器中访问下面的URL就会获取到该图像：</div><div><code>http://localhost:8080/apress/images/logo.jpg</code></div><div><br></div><div>图像文件会直接在浏览器中显示出来，通过该方式你还可以通过浏览器访问其他子目录下的其它文件。只不过，WEB-INF下文件夹是不公开的，因此无法通过浏览器直接获取到。尝试访问其内的文件会得到一个404结果。</div><div><br></div><div>然后，编辑一个JSP文件：</div>"
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "<%@ page import=\"java.util.Calendar\" %>\r\n<html>\r\n    <head>\r\n        <title>Apress Demo</title>\r\n        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\r\n    </head>\r\n    <body>\r\n        <div class=\"content\">\r\n            <b>Welcome to Apress</b>\r\n            <p>Today is <%=Calendar.getInstance().getTime()%></p>\r\n            <%\r\n            String greeting;\r\n            int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);\r\n            if (hourOfDay < 12) {\r\n                greeting = \"Good Morning\";\r\n            } else if (hourOfDay >= 12 && hourOfDay < 19) {\r\n                greeting = \"Good Afternoon\";\r\n            } else {\r\n                greeting = \"Good Evening\";\r\n            }\r\n            %>\r\n            <p><%=greeting%></p>  \r\n        </div>\r\n    </body>\r\n</html>"
     },
     {
       "type": "text",
-      "data": ""
+      "data": "<ul><li>所有的JSP语法都是以&lt;%开头，以%&gt;结束。</li><li>根据语法的类型不同，开头略有变化。</li><ul><li>JSP指令：&lt;%@</li><li>JSP脚本：&lt;%</li><li>JSP取值：&lt;%=</li></ul></ul><div>将这个JSP文件放置到：<code>/apress/jsp/index.jsp</code>​之后，就可以通<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px;\">http://localhost:8080/apress/jsp/index.jsp</span></div><div><code>​</code>​访问到它了。此外，JSP文件的后缀可以是jsp或者jspx，Tomcat都能识别。<br></div>"
+    },
+    {
+      "type": "text",
+      "data": "下面编辑一个Servlet。<div><br></div><div>在Java Servlet API中，Servlet由</div><div>&nbsp; &nbsp; javax.servlet.Servlet</div><div>来定义，为了方便开发者，Java Servlet API直接给出了HTTP协议的参照实现：</div><div>&nbsp; &nbsp; javax.servlet.http.HttpServlet</div><div><br></div><div>注意，上面两个类处于不同的包中。</div>"
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "data": "package com.apress.apachetomcat7.chapter2;\r\n\r\nimport java.io.*;\r\nimport javax.servlet.*;\r\nimport javax.servlet.http.*;\r\n\r\npublic class HelloWorldServlet extends HttpServlet {\r\n    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {\r\n        response.setContentType(\"text/html\");\r\n        PrintWriter out = response.getWriter();\r\n        out.println(\"<html>\");\r\n        out.println(\"<head>\");\r\n        out.println(\"<title>Hello World!</title>\");\r\n        out.println(\"</head>\");\r\n        out.println(\"<body>\");\r\n        out.println(\"<h1>Hello World!</h1>\");\r\n        out.println(\"</body>\");\r\n        out.println(\"</html>\");\r\n  }\r\n}"
+    },
+    {
+      "type": "text",
+      "data": "在这个例子中，HelloWorldServlet继承了HttpServlet类，并且重写了其中的doGet方法。由于我们向服务发送的是HTML，因此在一开始的位置就将响应对象的contentType设置为“text/html” 。<div><br></div><div>Tomcat中部署的并不是源文件，因此接下来要编译该源文件。由于使用到了Servlet API，因此在编译时要将包含Servlet API的类放置到类路径之中。这些类包含在Tomcat的lib目录下的</div><div><code>servlet-api.jar</code></div><div>之中，因此，编译该源文件的命令会是这样的：</div><div><br></div><div><code>javac HelloWorldServlet.java -cp CATALINA_HOME/lib/servlet-api.jar</code><br></div><div>​</div><div>然后将编译好的HelloWorldServlet.class移动到Tomca服务器中。基于源文件的内容和Tomcat的位置，该class文件的部署路径为：</div><div>CATALINA_HOME/apress/WEB-INF/classes/com/apress/apachetomcat7/chapter2/HelloWorldServlet.class<br></div><div><br></div><div>最后，Servlet需要添加到web.xml文件中才能生效，我们之前编辑了一个空的web.xml文件，现在需要将Servlet的配置信息添加进去：</div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\r\n<web-app xmlns=\"http://java.sun.com/xml/ns/javaee\"\r\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n  xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd\" \r\n  version=\"3.0\">\r\n      <display-name>Chapter 2</display-name>\r\n      <description>Apress demo</description>\r\n      <servlet>\r\n          <servlet-name>helloworld</servlet-name>\r\n          <servlet-class>com.apress.apachetomcat7.chapter2.HelloWorldServlet</servlet-class>\r\n      </servlet>\r\n      <servlet-mapping>\r\n          <servlet-name>helloworld</servlet-name>\r\n          <url-pattern>/hello.html</url-pattern>\r\n      </servlet-mapping>\r\n</web-app>"
+    },
+    {
+      "type": "text",
+      "data": "由于该Servlet的url-pattern被设置为/hello.html，因此需要使用下面的URL访问到它（修改了web.xml需要重启Tomcat）：<div><code><a href=\"http://localhost:8080/apress/hello.html\">http://localhost:8080/apress/hello.html</a></code></div>"
+    },
+    {
+      "type": "text",
+      "data": "直接在Tomcat中部署的文件夹称作 expoded directory【展开式目录】。展开式目录并不是Java Servlet标准的一部分。因此在其他服务器上可能不会被支持。<div><br></div><div>下面介绍的是war文件部署。</div><div>war文件是一个包含某个web应用所有资源的单一归档文件。war文件实际上是一个zip格式的文件。使用Java的jar工具就可以获取到war文件。</div><div><br></div><div>使用jar命令将apress文件夹转换为war文件：</div><div><code>jar cvf apress.war .</code></div><div>(注意命令最后的句点\".\")</div><div>v 是 让命令输出verbose级别的日志。</div><div>c 创建jar包</div><div>f 指定jar包的名。</div><div><br></div><div>所谓的部署war打包的Web应用程序无非就是将war文件拷贝到CATALINA_HOME/webapps目录里去。Tomcat在运行时，会将war文件解包然后将其内容以<span style=\"line-height: 1.4;\">【展开式目录】的形式复制到</span><span style=\"line-height: 1.4;\">CATALINA_HOME/webapps中去。比如apress.war会被解包到</span><span style=\"line-height: 1.4;\">CATALINA_HOME/webapps/apress目录下。Tomcat是由于性能方面的考虑才将其解包的，这是因为每次请求时直接从系统读取文件要更快一些。有时候Tomcat会运行在一个无法解包的环境中，比如写权限受限时，那时你就应该将该应用其设置为不解包，比如这样：</span></div><div><span style=\"color: rgb(221, 221, 221);\"><code>&lt;Context path=\"/apress\" docBase=\"apress\" unpackWar=\"true\" reloadable=\"true\"&gt;</code></span><br></div><div><br></div><div>这句话要添加到CATALINA_HOM/conf/server.xml文件中去。</div><div><ul><li>docBase属性定义了应用的根目录，这里面可以指定绝对路径或者相对路径。当指定相对路径时，参照的是父节点Host标签内的appBase属性；</li><li>path属性指定了应用的Uri</li><li>roloadable属性设置为true的时候，Tomcat会监视应用中，WEB-INF/classes和WEB-INF/lib内的文件变化，并在必要的时候重新部署。这虽然有利于开发时的快速部署，但是毕竟会对性能造成影响因此它的默认值是false。</li></ul></div><h1>配置虚拟主机【Host】和上下文【<span style=\"line-height: 1.4;\">Context</span><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\">】</span></h1><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\">在Tomcat的架构中，每一个部署的应用程序都是一个Context，Context在Host节点下面。在Tomcat默认情况下会为我们部署的应用指定默认虚拟主机。</span></div><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\">虚拟主机的配置在</span><span style=\"line-height: 1.4;\">CATALINA_HOM/conf/server.xml文件中，打开该文件，你会看到Tomcat在安装之处就有了一个虚拟主机的配置：</span></div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<Host name=\"localhost\"  appBase=\"webapps\" unpackWARs=\"true\" autoDeploy=\"true\">\n   。。。。。\n</Host>"
+    },
+    {
+      "type": "text",
+      "data": "虚拟主机的配置使用Host标签。<div><br></div><div>Host标签中必须有一个name属性，它的值通常指定为Tomcat运行的机器的域名，比如www.myexample.com。Tomcat自带的这个虚拟主机配置使用的是localhost，指的是本地机器。<div>注：</div><div><ul><li><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\">指定为localhost的时候，所有能访问到该机器的地址都适用。</span><br></li><li><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\">指定为127.0.0.1的时候，必须使用127.0.0.1才能访问到具体的应用。</span></li><li><span style=\"line-height: 1.4;\">指定为192.168.30.190的时候，必须使用192.168.30.190才能访问到具体的应用。</span></li><li><span style=\"line-height: 1.4;\">综上，localhost在内部可能是特殊处理过的，而其它的形式会被精确匹配。</span></li></ul><div><font color=\"#cccccc\">autoDeploy属性告诉Tomcat要不要定期地检查展开的文件夹本身以及war文件的时间戳。autoDeploy为true的情况下，如果检测到更新，就会触发Tomcat对该应用的重新部署行为。</font></div></div><div><font color=\"#cccccc\"><br></font></div><div><font color=\"#cccccc\"><br></font></div><div>Web应用的Context可以在四个地方进行设置：</div></div><div><ol><li>在server.xml文件中。</li><ol><li>name， appBase， autoDeploy等是必须制定的属性。</li><li>Tomcat不会定义检查该文件，因此修改它需要重启服务器。</li></ol><li>在CATALINA_HOME/conf/ENGINE_NAME/HOST_NAME/CONTEXT_PATH.xml文件中。</li><ol><li>由于path信息已经体现在文件名之中，因此在文件内部不能指定path属性。</li><li>此时的docBase中仅可以使用绝对路径。</li></ol><li>在应用内META-INF/context.xml文件中。</li><ol><li>仅仅在上述两处没有设置时才会生效。</li></ol><li>Tomcat的conf目录下还有一个context.xml文件。对它的更改会应用到所有的应用上面。比如设置reloadable到context.xml中会使得所有的应用都监听类路径的变化。</li></ol><div><div style=\"color: rgb(221, 221, 221);\"><br></div></div></div><h1>从Eclipse IDE中部署Web应用</h1><div>下载Eclipse是必须的：www.eclipse.org/downloads/</div><div><br></div><div>如果手头上的Eclipse并不支持Java Web开发，必须首先安装Web开发工具。</div><div>Help -&gt;&nbsp;</div><div>&nbsp; &nbsp; &nbsp; Install New Software -&gt;&nbsp;</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; All available sites -&gt;</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 找到“<span style=\"color: rgb(221, 221, 221); line-height: 1.4;\">Web, Xml, Java EE and OSGi enterprise&nbsp;</span><span style=\"line-height: 1.4; color: rgb(221, 221, 221);\">development;</span><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\">”</span></div><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\"><br></span></div><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\">安装完毕这些工具需要重启Eclipse。（或者直接安装Eclipse Java EE版本）</span></div><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\"><br></span></div><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\"><br></span></div><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\"><br></span></div>"
+    },
+    {
+      "type": "text",
+      "data": "<h1><br></h1>"
     }
   ]
 }
