@@ -55,12 +55,12 @@
     },
     {
       "type": "text",
-      "data": "JSP文件首次被请求时，它会被服务器以源代码的形式翻译为一个Servlet类，紧接着会被编译为.class文件并加载到内存之中。于是该JSP就完完全全地变成了一个Servlet。<div><span style=\"line-height: 1.4;\">从JSP生成的Servlet还会实现</span><code>javax.servlet.jsp.HttpJspPage</code><span style=\"line-height: 1.4;\">接口（该类属于</span><code>jsp-api.jar</code><span style=\"line-height: 1.4;\">）。</span><br></div>"
+      "data": "JSP文件首次被请求时，首先，它会被服务器翻译为一个Servlet类，然后被编译为.class文件并加载到内存之中。该JSP最终变成一个Servlet。<div><br><div><span style=\"line-height: 1.4;\">从JSP生成的Servlet还会实现</span><code>javax.servlet.jsp.HttpJspPage</code><span style=\"line-height: 1.4;\">接口（该类属于</span><code>jsp-api.jar</code><span style=\"line-height: 1.4;\">）。</span><br></div></div>"
     },
     {
       "type": "code",
       "language": "java",
-      "data": "//摘自apache-tomcat-7.0.47源代码\r\n package javax.servlet.jsp;\r\n\r\nimport java.io.IOException;\r\n\r\nimport javax.servlet.ServletException;\r\nimport javax.servlet.http.HttpServletRequest;\r\nimport javax.servlet.http.HttpServletResponse;\r\n\r\npublic interface HttpJspPage extends JspPage {\r\n\r\n     /**\r\n     * 用于Servlet中的请求处理\r\n     */\r\n    public void _jspService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;\r\n}"
+      "data": "//摘自apache-tomcat-7.0.47源代码\r\n package javax.servlet.jsp;\r\n\r\nimport java.io.IOException;\r\n\r\nimport javax.servlet.ServletException;\r\nimport javax.servlet.http.HttpServletRequest;\r\nimport javax.servlet.http.HttpServletResponse;\r\n\r\npublic interface HttpJspPage extends JspPage {\r\n     /**\r\n     * 用于Servlet中的请求处理\r\n     */\r\n    public void _jspService(HttpServletRequest request, HttpServletResponse response) \r\n        throws ServletException, IOException;\r\n}"
     },
     {
       "type": "code",
@@ -69,7 +69,7 @@
     },
     {
       "type": "text",
-      "data": "<div>在Tomcat的源代码中，可以看到：</div><div>JSP文件被翻译成一个HttpJspBase类，类名与JSP的文件名相关。<span style=\"background-color: rgb(254, 250, 0); color: rgb(50, 50, 50); line-height: 1.4;\">JSP的父类可以通过JSP的page指令进行更改</span></div><div><span style=\"line-height: 1.4;\"><code>HttpJspBase</code>是一个继承自<code>HttpServlet</code>类并实现了<code>HttpJspPage</code>接口的抽象类。</span><br></div><div><span style=\"line-height: 1.4;\"><br></span></div>后续对该JSP文件的请求时，服务器会首先检测JSP文件是否有改动，如果没有改动，服务器会调用之前生成的Servlet对象，从而省略翻译与编译过程。如果有改动，服务器就会重新走一遍JSP文件的翻译，编译，初始化的流程。<div><br></div>"
+      "data": "<div>JSP被访问过后，在Tomcat中就可以看到JSP被翻译成的Java代码。在默认情况下，JSP文件被翻译成一个HttpJspBase类，类名与JSP的文件名相关。<span style=\"background-color: rgb(254, 250, 0); color: rgb(50, 50, 50); line-height: 1.4;\">JSP的父类可以通过JSP的page指令进行更改</span></div><div><span style=\"line-height: 1.4;\"><code>HttpJspBase</code>是一个继承自<code>HttpServlet</code>类并实现了<code>HttpJspPage</code>接口的抽象类。</span><br></div><div><ul><li>如果项目已经部署在webapps里面，Tomcat会在work目录下生成JSP的源代码（需要至少访问一次JSP文件）。<br></li><li>如果通过Eclipse部署项目，需要双击Server来查看具体生成JSP的路径。</li><li>Intellij的话我还真不知道。</li></ul></div><div><span style=\"line-height: 1.4;\"><br></span></div>后续对该JSP文件的请求时，服务器会首先检测JSP文件是否有改动，如果没有改动，服务器会调用之前生成的Servlet对象，从而省略翻译与编译过程。如果有改动，服务器就会重新走一遍JSP文件的翻译，编译，初始化的流程。<div><div><br></div></div>"
     },
     {
       "type": "code",
@@ -158,11 +158,21 @@
     },
     {
       "type": "text",
-      "data": "除了使用表达式标签以外，Tomcat 7中还可以使用EL表达式。EL表达式使开发者可以在当前页面中方便地访问以下4个范围内Java对象。<div><ol><li>pageScope ：&nbsp;</li><li>requestScope<br></li><li>sessionScope<br></li><li>applicationScope</li></ol></div><div>比如，如果你在<code>HttpServletRequest</code>中有一个<code>username</code>属性，那么在jsp页面上就可以使用<code>${requestScope.username}</code>来输出它的值。</div><div>此外，EL表达式还提供了对HttpServletRequest中常用属性的支持，比如：</div><div><ul><li><code>${param.NAME}</code>获取请求中某个参数的单一值。</li><li><code>${paramValues.NAME}</code>&nbsp;获取请求中某个参数的数组值。<br></li><li><code>${header.NAME}</code>获取请求中的某个header属性值。<br></li><li><code>${headerValues.NAME}</code>获取请求中的某个header数组值。<br></li><li><code>${cookie.NAME}</code>返回请求中所携带的其中某个cookie的<code>java.servlet.http.Cookie</code>对象。<br></li></ul><div>EL表达式还可以计算数学和逻辑表达式，比如：</div></div><div><ul><li><code>${1+2}&nbsp;</code>输出 3<br></li><li><code>${requestScope.username == sessionScope.loggedinuser} </code>输出 true 或者 false。<br></li><li><code>${requestScope.count &gt; 5} </code>输出 true 或者 false。</li><li><code>${!empty param.product_id} </code>测试param中是否存在<code>product_id</code>。<br></li></ul></div><div><br></div><div><br></div>"
+      "data": "除了使用表达式标签以外，Tomcat 7中还可以使用EL表达式。EL表达式使开发者可以在当前页面中方便地访问以下4个范围内Java对象。<div><ol><li>pageScope ：&nbsp;</li><li>requestScope<br></li><li>sessionScope<br></li><li>applicationScope</li></ol></div><div>比如，如果你在<code>HttpServletRequest</code>中有一个<code>username</code>属性，那么在jsp页面上就可以使用<code>${requestScope.username}</code>来输出它的值。</div><div>此外，EL表达式还提供了对HttpServletRequest中常用属性的支持，比如：</div><div><ul><li><code>${param.NAME}</code>获取请求中某个参数的单一值。</li><li><code>${paramValues.NAME}</code>&nbsp;获取请求中某个参数的数组值。<br></li><li><code>${header.NAME}</code>获取请求中的某个header属性值。<br></li><li><code>${headerValues.NAME}</code>获取请求中的某个header数组值。<br></li><li><code>${cookie.NAME}</code>返回请求中所携带的其中某个cookie的<code>java.servlet.http.Cookie</code>对象。<br></li></ul><div>EL表达式还可以计算数学和逻辑表达式，比如：</div></div><div><ul><li><code>${1+2}&nbsp;</code>输出 3<br></li><li><code>${requestScope.username == sessionScope.loggedinuser} </code>输出 true 或者 false。<br></li><li><code>${requestScope.count &gt; 5} </code>输出 true 或者 false。</li><li><code>${!empty param.product_id} </code>测试param中是否存在<code>product_id</code>。<br></li></ul><div>EL表达式不仅仅可以用于直接向页面上输出值，还可以用于自定义标签。比如上一节中介绍的<code>if</code>标签。</div></div>"
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "<c:if test=\"${empty param.productId}\">\r\nPlease select a product!\r\n</c:if>"
     },
     {
       "type": "text",
-      "data": ""
+      "data": "<h3>脚本片段</h3><div>脚本片段会在JSP翻译时完全照搬过去。脚本片段以<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\"><code>&lt;%</code></font> 开头，以 <code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">%&gt;</font></code>结尾，中间部分是Java代码。</div>"
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "<HTML>\r\n<BODY>\r\n<% out.println(\"Hello Bob\"); %>\r\n</BODY>\r\n</HTML>"
     },
     {
       "type": "text",
