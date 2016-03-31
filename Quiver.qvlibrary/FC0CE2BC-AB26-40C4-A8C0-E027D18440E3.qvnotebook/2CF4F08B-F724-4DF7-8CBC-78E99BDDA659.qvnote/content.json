@@ -3,7 +3,194 @@
   "cells": [
     {
       "type": "text",
-      "data": "<h1>Servlet</h1><div><br></div><div>Servlet框架由两个Java包构成：javax.servlet 和 javax.servlet.http。</div><div>javax.servlet 中是所有Servlet所必须扩展和实现的通用接口定义； javax.servlet.http 是Servlet框架针对HTTP协议作出的具体实现。<br></div><div>这里面最重要的一个类是javax.servlet.Servlet，它是所有Servlet的基类，是所谓的Servlet接口，它定义了5个Servlet所必有的方法</div>"
+      "data": "<h1>Servlet</h1><div><span style=\"line-height: 1.4;\">Servlet框架由两个Java包构成：javax.servlet 和 javax.servlet.http。</span><br></div><div>javax.servlet 中是所有Servlet所必须扩展和实现的通用接口定义； javax.servlet.http 是Servlet框架针对HTTP协议作出的具体实现。<br></div><div>这里面最重要的一个类是javax.servlet.Servlet，它是所有Servlet的基类，是所谓的Servlet接口，它定义了5个Servlet所必有的方法。</div><div><br></div><div>下面的源代码摘自apache-tomcat-7.0.47</div>"
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "data": "package javax.servlet;\n\nimport java.io.IOException;\n\npublic interface Servlet {\n    /**\n     * 执行Servlet的初始化。\n     * 该方法会在Servlet首次被访问的时候（默认）或者服务器启动时（需额外设置）被调用。\n     * 在方法的实现中，应该做一些资源的初始化工作。\n     * \n     * config对象中包含容器对该Servlet的设置，这个被保存为一个成员变量以供之后使用。\n     * \n     * 该方法可以抛出异常，异常导致Servlet无法完成初始化。\n     * 在初始化失败的情况下，后续的每次访问都会重新调用该方法。\n     */\n    public void init(ServletConfig config) throws ServletException;\n\n    public ServletConfig getServletConfig();\n    \n    /**\n     * 处理来自客户端的请求。对该Servlet的访问都会触发该方法。\n     * req参数包含了来自客户端的所有数据。res参数负责保存传送给客户端的数据。\n     * \n     * 通常我们会继承javax.servlet.http.HttpServlet，因此很少有机会可以直接实现该方法。\n     * HttpServlet继承自javax.servlet.GenericServlet，而后者是本接口的实现类。\n     */\n    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException;\n    \n    public String getServletInfo();\n    \n    /**\n     * 执行一些清理工作。视情况清理那些在init方法中初始化过的资源。\n     * 该方法通常会在服务器关闭时被调用。\n     */\n    public void destroy();\n}"
+    },
+    {
+      "type": "text",
+      "data": "<div>使用IDE的时候注意：</div><ul><li>使用Eclipse建立Java Web项目时，必须指定服务器。项目建立完毕后，服务器的类库会自动导入类路径。</li><li>使用intellij 14建立Java&nbsp;Web项目时，<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">不需要指定</font>服务器。项目建立完毕后，如果使用Servlet等API需要手动导入这部分类库。</li></ul><div><br></div><div>Servlet设计了一种基于请求与相应模型的服务器端的处理流程，并不依赖于具体某个协议，比如HTTP。然而HTTP是这种模型的最常用协议，因此，Servlet API继而定义了javax.servlet.http包来处理所有的基于HTTP协议的请求与相应。</div>"
+    },
+    {
+      "type": "text",
+      "data": "<h2>ServletRequest 和 ServletResponse</h2><div>这两个接口类型是对客户端请求与相应的抽象。</div><div>每次服务器接收到一个请求时，服务器容器就会创建这两个对象的实例，然后当做参数传递给Servlet的service方法。</div><div><br></div><div>ServletRequest中封装了来自客户端的所有数据。这些数据包括，客户端IP地址，端口号，contentType，语言，键值对参数等等。</div><div><br></div><div>通常Servlet用于处理http协议，因此，传入到service方法中的参数往往是HttpServletRequest和<span style=\"line-height: 1.4;\">HttpServletResponse的实例。这两个类也都是接口，但是从继承关系来看，它们分别继承自</span><span style=\"line-height: 1.4;\">ServletRequest和ServletResponse。服务器的容器负责这两个参数的具体实现，比如Tomcat对</span><span style=\"line-height: 1.4;\">HttpServletRequest的实现是</span><span style=\"line-height: 1.4;\">org.apache.catalina.connector.Request类，Tomcat对开发者隐藏这些实现是为了遵守Servlet API标准，进而使Web应用可以跨平台。</span></div><div><span style=\"line-height: 1.4;\"><br></span></div><div><span style=\"line-height: 1.4;\"><br></span></div><div>ServletResponse提供了一些可以将数据返回到客户端的方法。该接口中的两个最常用的方法是getOutputStream()和getWriter()方法。<span style=\"line-height: 1.4;\"><br></span></div><div><br></div><div>getOutputStream()返回一个ServletOutputStream， Servlet的开发者可以使用该对应向客户端直接发送二进制数据。使用该方法，开发者还可以开发二进制文件的下载功能，比如音乐，视频，等。</div><div>getWriter()返回的是PrintWriter对象，使用该对象可以向客户端发送文本信息。</div>"
+    },
+    {
+      "type": "text",
+      "data": "<h1>GenericServlet 和 HttpServlet</h1><div><span style=\"line-height: 1.4;\">GenericServlet 本身是抽象类，</span>HttpServlet继承自GenericServlet。<br></div><div><br></div><div>当你的Servlet直接继承<span style=\"line-height: 1.4;\">GenericServlet，你需要给出service方法的实现（如何处理请求）。</span></div><div><code>GenericServlet</code>实现了<code>Servlet</code>接口中的<code>init(ServletConfig config)</code>方法：将config对象保存起来；不过，它并没有实现<span style=\"line-height: 1.4;\"><code>service</code>方法。</span><span style=\"line-height: 1.4;\"><br></span></div>"
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "data": "package javax.servlet;\n\nimport java.io.IOException;\nimport java.util.Enumeration;\n\npublic abstract class GenericServlet implements Servlet, ServletConfig, java.io.Serializable {\n\n    private static final long serialVersionUID = 1L;\n    private transient ServletConfig config;\n\n    public GenericServlet() {}\n\n    @Override\n    public void destroy() {}\n\n    @Override\n    public String getInitParameter(String name) {\n        return getServletConfig().getInitParameter(name);\n    }\n\n    @Override\n    public Enumeration<String> getInitParameterNames() {\n        return getServletConfig().getInitParameterNames();\n    }\n\n    @Override\n    public ServletConfig getServletConfig() {\n        return config;\n    }\n\n    @Override\n    public ServletContext getServletContext() {\n        return getServletConfig().getServletContext();\n    }\n\n    @Override\n    public String getServletInfo() {\n        return \"\";\n    }\n\n    @Override\n    public void init(ServletConfig config) throws ServletException {\n        this.config = config;\n        this.init();\n    }\n\n    public void init() throws ServletException {}\n\n    public void log(String msg) {\n        getServletContext().log(getServletName() + \": \" + msg);\n    }\n\n    public void log(String message, Throwable t) {\n        getServletContext().log(getServletName() + \": \" + message, t);\n    }\n\n    @Override\n    public abstract void service(ServletRequest req, ServletResponse res)\n            throws ServletException, IOException;\n\n    @Override\n    public String getServletName() {\n        return config.getServletName();\n    }\n}"
+    },
+    {
+      "type": "text",
+      "data": "当继承自HttpServlet时，你不再需要实现service方法，该方法已经在HttpServlet中给出了实现。HttpServlet真正需要处理的Http协议的细节问题。比如处理get，post等类型的请求。HttpServlet要求的是重载其中doGet，doPost等方法来对具体的Http方法进行处理。这种模式在一定程度上简化了程序员的工作。"
+    },
+    {
+      "type": "text",
+      "data": "<h2>注册Servlet</h2>Servlet需要注册到容器中可以生效。为了注册Servlet，我们需要为应用声明web.xml文件。并将Servlet的信息写到里面。<div>基本的Servlet配置方法在上一章已经见过，这里不再赘述。</div><div><br></div><div>Servlet API 3.0 版本可以支持使用注解注册Servlet的各种属性，使用注解时，<span style=\"line-height: 1.4;\">不再需要在</span><span style=\"line-height: 1.4;\">web.xml中进行描述</span></div>"
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "data": "@WebServlet(\n\t\tname = \"helloWorldServlet\", \n\t\turlPatterns = {\"/hello.html\"}, \n\t\tinitParams = {\n\t\t\t\t@WebInitParam(name=\"message\", value=\"Hello Universe!\")\n\t\t}\n)\npublic class HelloWorldServlet extends HttpServlet {\n    ......\n}"
+    },
+    {
+      "type": "text",
+      "data": "&nbsp;@WebServlet中的参数类型与web.xml其实是相互匹配的：<br><div><ul><li><span style=\"line-height: 1.4;\"><code>name</code> 对应&nbsp;</span><code>&lt;servlet-name&gt;</code><br></li><li><span style=\"line-height: 1.4;\"><code>urlPattern</code>&nbsp;对应&nbsp;<code>&lt;url-mapping&gt;</code>。<br></span></li><li><span style=\"line-height: 1.4;\"><code>initParams</code>&nbsp;对应&nbsp;<code>&lt;init-param&gt;</code>，其中的<code>@WebInitParam</code>对应</span><span style=\"line-height: 1.4;\">&nbsp;<code>&lt;param-name&gt;</code> 和&nbsp;</span><span style=\"line-height: 1.4;\"><code>&lt;param-value&gt; </code>元素</span></li></ul><div>注解加快了开发速度，但是其缺点也是显而易见的：</div><div><ul><li><span style=\"line-height: 1.4;\">由于注解使得Tomcat 7需要扫描项目中所有的类，因此在一些极端情况下，这会严重拖慢Tomcat的启动速度。</span><br></li><li>增加了日常维护的困难。</li></ul><div>web.xml文件中的根元素<code style=\"font-size: 11px;\">&lt;web-app&gt;</code>中可以设置<code style=\"font-size: 11px;\">metadata-complete</code>属性，属性值为<code style=\"font-size: 11px;\">true</code>或者<code style=\"font-size: 11px;\">false</code>，默认为<code style=\"font-size: 11px;\">false</code>。<div><code style=\"font-size: 11px;\">metadata-complete</code>告诉Tomcat 7服务器是否当前的部署描述符已经完整，当设置为true时，Tomcat 7不再扫描类路径以寻找额外的注解配置。这也会加快Tomcat 7的启动速度。</div></div></div></div>"
+    },
+    {
+      "type": "text",
+      "data": "<h1>JSP</h1><div>当客户端访问某个jsp时，服务器检测到这一行为，并将该请求转发给JSP引擎。</div><div>在Tomcat服务器中，该引擎是由<code>org.apache.jasper.servlet.JspServlet</code>类来担当的，该类是在<code>CATALINA_HOME/conf/web.xml</code> 中配置的：</div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<!-- 摘自CATALINA_HOME/conf/web.xml -->\n<servlet>\n        <servlet-name>jsp</servlet-name>\n        <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>\n        <init-param>\n            <param-name>fork</param-name>\n            <param-value>false</param-value>\n        </init-param>\n        <init-param>\n            <param-name>xpoweredBy</param-name>\n            <param-value>false</param-value>\n        </init-param>\n        <load-on-startup>3</load-on-startup>\n</servlet>\n\n<servlet-mapping>\n        <servlet-name>jsp</servlet-name>\n        <url-pattern>*.jsp</url-pattern>\n        <url-pattern>*.jspx</url-pattern>\n</servlet-mapping>"
+    },
+    {
+      "type": "text",
+      "data": "JSP文件首次被请求时，它会被服务器以源代码的形式翻译为一个Servlet类，紧接着会被编译为.class文件并加载到内存之中。于是该JSP就完完全全地变成了一个Servlet。<div><span style=\"line-height: 1.4;\">从JSP生成的Servlet还会实现</span><code>javax.servlet.jsp.HttpJspPage</code><span style=\"line-height: 1.4;\">接口（该类属于</span><code>jsp-api.jar</code><span style=\"line-height: 1.4;\">）。</span><br></div>"
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "data": "//摘自apache-tomcat-7.0.47源代码\r\n package javax.servlet.jsp;\r\n\r\nimport java.io.IOException;\r\n\r\nimport javax.servlet.ServletException;\r\nimport javax.servlet.http.HttpServletRequest;\r\nimport javax.servlet.http.HttpServletResponse;\r\n\r\npublic interface HttpJspPage extends JspPage {\r\n\r\n     /**\r\n     * 用于Servlet中的请求处理\r\n     */\r\n    public void _jspService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;\r\n}"
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "data": "package javax.servlet.jsp;\n\nimport javax.servlet.Servlet;\n\npublic interface JspPage extends Servlet {\n\n    /**\n     * 用于Servlet的初始化\n     */\n    public void jspInit();\n\n    /**\n     * 用于Servlet的销毁\n     */\n    public void jspDestroy();\n}"
+    },
+    {
+      "type": "text",
+      "data": "<div>在Tomcat的源代码中，可以看到：</div><div>JSP文件被翻译成一个HttpJspBase类，类名与JSP的文件名相关。<span style=\"background-color: rgb(254, 250, 0); color: rgb(50, 50, 50); line-height: 1.4;\">JSP的父类可以通过JSP的page指令进行更改</span></div><div><span style=\"line-height: 1.4;\"><code>HttpJspBase</code>是一个继承自<code>HttpServlet</code>类并实现了<code>HttpJspPage</code>接口的抽象类。</span><br></div><div><span style=\"line-height: 1.4;\"><br></span></div>后续对该JSP文件的请求时，服务器会首先检测JSP文件是否有改动，如果没有改动，服务器会调用之前生成的Servlet对象，从而省略翻译与编译过程。如果有改动，服务器就会重新走一遍JSP文件的翻译，编译，初始化的流程。<div><br></div>"
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "data": "public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase\n\npublic abstract class HttpJspBase extends HttpServlet implements HttpJspPage "
+    },
+    {
+      "type": "text",
+      "data": "<code>HttpJspBase</code>类对<code>HttpServlet</code>做了一些改动：<div><ul><li><span style=\"line-height: 1.4;\">重载了<code></code><code>void&nbsp;init(Ser</code><code>vletConfig config)</code>方法</span><span style=\"line-height: 1.4;\">使其调用由</span><code>HttpJspPage</code><span style=\"line-height: 1.4;\">接口所规定的初始化方法</span><code>jspInit()，</code><span style=\"line-height: 1.4;\">以及由其自身定义的新方法</span><code>p<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">ublic void _jspInit()</font> </code>。</li><li><span style=\"line-height: 1.4;\">重载了</span><code>void destroy()</code>方法，使其调用由<code>HttpJspPage</code>接口所规定的初始化方法<code>jspDestroy()</code><code style=\"font-size: 11px;\">，</code><span style=\"line-height: 1.4;\">以及由其自身定义的新方法</span><code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">protected void _jspDestroy()</font></code>。</li><li><span style=\"line-height: 1.4;\">重载了</span><code style=\"font-size: 11px;\">void service(HttpServletRequest request, HttpServletResponse response)</code>方法，使其调用由<code>HttpJspPage</code>接口所规定的初始化方法<code style=\"font-size: 11px;\">_jspService()</code>。</li></ul><div><br></div></div><div>下面是<span style=\"line-height: 1.4;\"><code>HttpJspBase</code>的</span><span style=\"line-height: 1.4;\">源代码：</span></div>"
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "data": "@Override\npublic final void init(ServletConfig config) throws ServletException {\n    super.init(config);\n    jspInit();\n    _jspInit();\n}\n@Override\npublic void jspInit() {}\npublic void _jspInit() {}\n\n@Override\npublic final void destroy() {\n    jspDestroy();\n    _jspDestroy();\n}\n@Override\npublic void jspDestroy() {}\nprotected void _jspDestroy() {}\n\n@Override\npublic final void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {\n    _jspService(request, response);\n}\n\n@Override\npublic abstract void _jspService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;"
+    },
+    {
+      "type": "text",
+      "data": "<h2>JSP指令</h2><div>在JSP页面里可以使用JSP<span style=\"line-height: 1.4;\">指令，JSP指令以<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">&lt;%@</font></code>开头，以<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">%&gt;</font></code>结尾。</span><span style=\"line-height: 1.4;\">目前可以使用3种JSP指令：page, include, taglib。</span></div><div>page指令常常用于设置JSP页面的元数据，比如使用import属性导入类：</div>"
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "<%@ page import=\"java.util.*\" %>"
+    },
+    {
+      "type": "text",
+      "data": "<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">page</font></code>指令有很多属性可以设置：<div><ul><li>import 用于向JSP页面导入类，可以通过逗号分隔导入多个项目。<br></li><li>language 用于设置JSP页面的编程语言，目前仅有java可以设置。因此该属性可忽略。<br></li><li>extends 用于设置JSP的父类。<br></li><li>session=\"true|false\" 用于决定是否session数据在当前页面有效。默认为true，有效。<br></li><li>buffer=\"none|size in kb\" 用于决定JSP页面的输出流是否是buffered，默认为8kb。<br></li><li>autoFlush=”true|false” 用于决定JSP页面的输入流是否在缓存已满的情况下自动冲刷，默认为true。设置为false时导致缓存满时抛出异常。<br></li><li>isThreadSafe=\"true|false\" 告诉JSP引擎，该JSP是否是线程安全的。如果为true，JSP引擎会生成可以在同一时间处理多个请求的Servlet。默认为true。如果为false，生成的Servlet就会使用<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">单线程模式</font>。<br></li><li>info=\"text\" 用于JSP所生成的Servlet中的<code>public String getServletInfo()</code>方法。<br></li><li>errorPage=\"error_url\" 当异常抛出时转向的错误页面。<br></li><li>isErrorPage=\"true|false\" 将当前的JSP标记为专门用于显示错误（异常）的页面，默认false。<br></li><li>contentType=\"ctinfo\" 设置返回给客户端的MIME类型和字符集。<br></li></ul></div>"
+    },
+    {
+      "type": "text",
+      "data": "<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">include</font></code>指令用于在翻译JSP为Servlet源代码时<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">静态</font><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">插入一段文本</font>。比如："
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "<%@ include file=\"header.jsp\" %>"
+    },
+    {
+      "type": "text",
+      "data": "<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\"><code>taglib</code></font>指令用于将一个标签库引入到当前的JSP页面之中，标签库由<code>uri</code>属性指定，<code>uri</code>所对应的标签库必须存在于当前Web应用的类路径之中。使用标签库内的标签时，需要加上<code>prefix</code>属性所指定的前缀。<div><br></div><div>JSP的规范中有一个JSTL（JSP Standard Tag Library），叫做JSP标准标签库，它包含了一些在JSP页面中经常使用的核心功能，比如条件判断，循环遍历，国际化，甚至SQL语句的执行等等。当前JSTL的版本是1.2，可以从<a href=\"http://jstl.java.net/\" style=\"line-height: 1.4;\"><code>http://jstl.java.net/</code></a>直接下载。使用JSTL时，你需要将<code>jstl.jar</code>拷贝到Web应用的<code>WEB-INF/lib</code>目录下，然后，在每个使用JSTL的JSP页面中都需要写上这么一句话：</div>"
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "<%@ taglib prefix=\"c\" uri=\"http://java.sun.com/jsp/jstl/core\" %>"
+    },
+    {
+      "type": "text",
+      "data": "然后，我们就可以使用其中的标签库了。比如，使用<code>if</code>标签进行条件判断："
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "<c:if test=\"${5 < 3}\">\n5 is greater then 3\n</c:if>"
+    },
+    {
+      "type": "text",
+      "data": "还可以使用<code>forEach</code>标签对集合对象进行循环遍历："
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "<c:forEach items=\"${users}\" var=\"u\">\r\nUser: ${u.username}\r\n</c:forEach>"
+    },
+    {
+      "type": "text",
+      "data": "注意：上面的代码中使用<code>$</code>符号的地方称为JSP表达式语言，简称EL表达式。EL表达式是JSP2.0版本中出现的新特性。我们现在还没有接触过。"
+    },
+    {
+      "type": "text",
+      "data": "<h2>JSP脚本</h2><div>JSP脚本就是在HTML文本中加入Java代码的技术。JSP脚本分为三种情况：声明，表达式，脚本片段。</div><div><br></div><h3>声明</h3><div>声明用于在JSP页面中定义Servlet的成员变量和成员方法，比如：</div>"
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "<%! private String name = new String(\"BOB\"); %>\n\n<%! public String getName() { return name; } %>"
+    },
+    {
+      "type": "text",
+      "data": "<h3>表达式</h3><div>表达式用于在请求时进行值计算，并用值替换此处的代码，比如：</div>"
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "Hello <B><%= getName() %></B>"
+    },
+    {
+      "type": "text",
+      "data": "除了使用表达式标签以外，Tomcat 7中还可以使用EL表达式。EL表达式使开发者可以在当前页面中方便地访问以下4个范围内Java对象。<div><ol><li>pageScope ：&nbsp;</li><li>requestScope<br></li><li>sessionScope<br></li><li>applicationScope</li></ol></div><div>比如，如果你在<code>HttpServletRequest</code>中有一个<code>username</code>属性，那么在jsp页面上就可以使用<code>${requestScope.username}</code>来输出它的值。</div><div>此外，EL表达式还提供了对HttpServletRequest中常用属性的支持，比如：</div><div><ul><li><code>${param.NAME}</code>获取请求中某个参数的单一值。</li><li><code>${paramValues.NAME}</code>&nbsp;获取请求中某个参数的数组值。<br></li><li><code>${header.NAME}</code>获取请求中的某个header属性值。<br></li><li><code>${headerValues.NAME}</code>获取请求中的某个header数组值。<br></li><li><code>${cookie.NAME}</code>返回请求中所携带的其中某个cookie的<code>java.servlet.http.Cookie</code>对象。<br></li></ul><div>EL表达式还可以计算数学和逻辑表达式，比如：</div></div><div><ul><li><code>${1+2}&nbsp;</code>输出 3<br></li><li><code>${requestScope.username == sessionScope.loggedinuser} </code>输出 true 或者 false。<br></li><li><code>${requestScope.count &gt; 5} </code>输出 true 或者 false。</li><li><code>${!empty param.product_id} </code>测试param中是否存在<code>product_id</code>。<br></li></ul></div><div><br></div><div><br></div>"
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
     }
   ]
 }

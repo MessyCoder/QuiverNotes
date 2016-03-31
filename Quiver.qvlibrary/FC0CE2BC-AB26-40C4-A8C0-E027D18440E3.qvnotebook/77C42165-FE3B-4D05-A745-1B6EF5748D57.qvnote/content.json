@@ -12,7 +12,7 @@
     },
     {
       "type": "text",
-      "data": "<div>在上面的例子中，我们设置了3个应用级别上的元素：</div><div><ol><li>设置了应用的显示名为Apress Demo。该设置并不触发任何动作。</li><li>设置了一个Servlet，并且为该Servlet添加了初始化参数。</li><li>设置了回话状态的有效持续时间。</li></ol><h1>手动部署Web应用</h1></div><div>假设现在手里有一个apress文件夹，其中已经创建好了Web应用的结构：</div><div><div></div><code>/apress</code></div><div><code>/apress/WEB-INF</code></div><div><code>/apress/WEB-INF/classes</code></div><div><code>/apress/WEB-INF/lib</code><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\"></span></div></div><div><code>​</code>​<br></div><div>现在，创建一个空的，但是完整的web.xml部署描述符文件：</div>"
+      "data": "<div>在上面的例子中，我们设置了3个应用级别上的元素：</div><div><ol><li>设置了应用的显示名为Apress Demo。该设置并不触发任何动作。</li><li>设置了一个Servlet，并且为该Servlet添加了初始化参数。</li><li>设置了回话状态的有效持续时间。</li></ol><div>另外，<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">部署描述符并非只有一个web.xml</font>，当一个<span style=\"line-height: 1.4;\">web.xml内容变得庞大以至于难于维护时，可以使用web-fragment.xml。</span></div><div><span style=\"line-height: 1.4;\">该文件放置在：</span><span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 1.4; background-color: rgba(0, 0, 0, 0.0392157);\">war_file.war#!/WEB-INF/lib/xxx.jar#!/META-INF/</span></div><div><span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 1.4; background-color: rgba(0, 0, 0, 0.0392157);\"><br></span></div><div>部署描述符的碎片化技术主要为了Web应用中<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">/WEB-INF/lib</span><span style=\"line-height: 1.4;\">下各种jar包的可插拔性设计的。</span><span style=\"line-height: 1.4;\">web-fragment.xml的</span><span style=\"line-height: 1.4;\">结构和web.xml几乎是一样的，你可以在其中定义Servlet，Filter，以及Listener，你还可以在其中一个jar包的web-fragment.xml中指定metadata-complete=true，于是该Jar文件会免于注解的遍历（因此提升服务器的启动速度）。</span></div><h1>手动部署Web应用</h1></div><div>假设现在手里有一个apress文件夹，其中已经创建好了Web应用的结构：</div><div><div></div><code>/apress</code></div><div><code>/apress/WEB-INF</code></div><div><code>/apress/WEB-INF/classes</code></div><div><code>/apress/WEB-INF/lib</code><div><span style=\"color: rgb(221, 221, 221); line-height: 1.4;\"></span></div></div><div><code>​</code>​<br></div><div>现在，创建一个空的，但是完整的web.xml部署描述符文件：</div>"
     },
     {
       "type": "code",
@@ -34,7 +34,7 @@
     },
     {
       "type": "text",
-      "data": "<ul><li>所有的JSP语法都是以&lt;%开头，以%&gt;结束。</li><li>根据语法的类型不同，开头略有变化。</li><ul><li>JSP指令：&lt;%@</li><li>JSP脚本：&lt;%</li><li>JSP取值：&lt;%=</li></ul></ul><div>将这个JSP文件放置到：<code>/apress/jsp/index.jsp</code>​之后，就可以通<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px;\">http://localhost:8080/apress/jsp/index.jsp</span></div><div><code>​</code>​访问到它了。此外，JSP文件的后缀可以是jsp或者jspx，Tomcat都能识别。<br></div>"
+      "data": "<div>现在，大体上可以了解一下JSP的特点：</div><ul><li>所有的JSP语法都是以&lt;%开头，以%&gt;结束。</li><li>根据语法的类型不同，开头略有变化。</li><ul><li>JSP指令：&lt;%@</li><li>JSP脚本：&lt;%</li><li>JSP取值：&lt;%=</li></ul></ul><div>将这个JSP文件放置到：<code>/apress/jsp/index.jsp</code>​之后，就可以通<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px;\">http://localhost:8080/apress/jsp/index.jsp</span></div><div><code>​</code>​访问到它了。此外，JSP文件的后缀可以是jsp或者jspx，Tomcat都能识别。<br></div>"
     },
     {
       "type": "text",
