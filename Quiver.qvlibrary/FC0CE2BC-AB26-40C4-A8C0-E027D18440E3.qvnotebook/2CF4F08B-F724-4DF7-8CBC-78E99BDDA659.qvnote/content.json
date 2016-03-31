@@ -69,7 +69,7 @@
     },
     {
       "type": "text",
-      "data": "<div>JSP被访问过后，在Tomcat中就可以看到JSP被翻译成的Java代码。在默认情况下，JSP文件被翻译成一个HttpJspBase类，类名与JSP的文件名相关。<span style=\"background-color: rgb(254, 250, 0); color: rgb(50, 50, 50); line-height: 1.4;\">JSP的父类可以通过JSP的page指令进行更改</span></div><div><span style=\"line-height: 1.4;\"><code>HttpJspBase</code>是一个继承自<code>HttpServlet</code>类并实现了<code>HttpJspPage</code>接口的抽象类。</span><br></div><div><ul><li>如果项目已经部署在webapps里面，Tomcat会在work目录下生成JSP的源代码（需要至少访问一次JSP文件）。<br></li><li>如果通过Eclipse部署项目，需要双击Server来查看具体生成JSP的路径。</li><li>Intellij的话我还真不知道。</li></ul></div><div><span style=\"line-height: 1.4;\"><br></span></div>后续对该JSP文件的请求时，服务器会首先检测JSP文件是否有改动，如果没有改动，服务器会调用之前生成的Servlet对象，从而省略翻译与编译过程。如果有改动，服务器就会重新走一遍JSP文件的翻译，编译，初始化的流程。<div><div><br></div></div>"
+      "data": "<div>JSP被访问过后，在Tomcat中就可以看到JSP被翻译成的Java代码。在默认情况下，JSP文件被翻译成一个HttpJspBase类，类名与JSP的文件名相关。<span style=\"background-color: rgb(254, 250, 0); color: rgb(50, 50, 50); line-height: 1.4;\">JSP的父类可以通过JSP的page指令进行更改</span></div><div><span style=\"line-height: 1.4;\"><code>HttpJspBase</code>是一个继承自<code>HttpServlet</code>类并实现了<code>HttpJspPage</code>接口的抽象类。</span><br></div><div><ul><li>如果项目已经部署在webapps里面，Tomcat会在work目录下生成JSP的源代码（需要至少访问一次JSP文件）。<br></li><li>如果通过Eclipse部署项目，需要双击Server来查看具体生成JSP的路径。</li><li>通过Intellij 14部署项目时，需要查看具体Intellij启动Tomcat时传递的-Dcatalina.base参数。该参数可以在Console中看到。</li><ul><li><font><code>INFO: Command line argument: -Dcatalina.base=/Users/panguofeng/Library/Caches/IntelliJIdea14/tomcat/Unnamed_java_web_test</code></font><br></li></ul></ul></div><div><span style=\"line-height: 1.4;\"><br></span></div>后续对该JSP文件的请求时，服务器会首先检测JSP文件是否有改动，如果没有改动，服务器会调用之前生成的Servlet对象，从而省略翻译与编译过程。如果有改动，服务器就会重新走一遍JSP文件的翻译，编译，初始化的流程。<div><div><br></div></div>"
     },
     {
       "type": "code",
@@ -176,7 +176,12 @@
     },
     {
       "type": "text",
-      "data": ""
+      "data": "<h3>JSP脚本内隐式对象</h3>除以上三种情况之外，在JSP脚本中，开发者还可以使用JSP隐式对象。这些对象都是JSP引擎在翻译JSP页面时插入到所生成的Servlet源代码中的，就如你自己定义过一样。<div><br></div><div><ul><li>out<br></li></ul><div>out是一个javax.servlet.jsp.JspWriter对象，用于向客户端写入字符数据。</div></div>"
+    },
+    {
+      "type": "code",
+      "language": "jsp",
+      "data": "<html>\r\n    <head>\r\n        <title>Use Out</title>\r\n    </head>\r\n    <body>\r\n    <%\r\n    // Print a simple message using the implicit out object.\r\n    out.println(\"<center><b>Hello Bob!</b></center>\");\r\n    %>\r\n    </body>\r\n</html>"
     },
     {
       "type": "text",
