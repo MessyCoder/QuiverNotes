@@ -1,0 +1,9 @@
+{
+  "title": "第四章 使用Tomcat的Manager应用",
+  "cells": [
+    {
+      "type": "text",
+      "data": "<span id=\"docs-internal-guid-6568a83d-d46a-fb59-a8ed-2abdf4ed3e2b\"><h1 dir=\"ltr\" style=\"line-height:1.38;margin-top:10pt;margin-bottom:0pt;\"><span style=\"font-size: 21.333333333333332px; font-family: 'Trebuchet MS'; color: rgb(0, 0, 0); font-weight: 400; vertical-align: baseline; white-space: pre-wrap;\">Tomcat的Manager应用是什么</span></h1><p dir=\"ltr\" style=\"line-height:1.38;margin-top:0pt;margin-bottom:0pt;\"><span style=\"font-size: 14.666666666666666px; font-family: Arial; color: rgb(0, 0, 0); vertical-align: baseline; white-space: pre-wrap;\">Tomcat服务器自带一个Manager应用，它的上下文路径是/manager，它提供了管理运行在Tomcat服务器上的最基础的功能。这些功能包括，安装，开始，停止，卸载，报告。使用Manager应用你可以轻松地进行本地或者远程服务器的部署工作。</span></p><div><span style=\"font-size: 14.666666666666666px; font-family: Arial; color: rgb(0, 0, 0); vertical-align: baseline; white-space: pre-wrap;\"><br></span></div></span>"
+    }
+  ]
+}
