@@ -16,7 +16,7 @@
     },
     {
       "type": "text",
-      "data": "<h2>ServletRequest 和 ServletResponse</h2><div>这两个接口类型是对客户端请求与相应的抽象。</div><div>每次服务器接收到一个请求时，服务器容器就会创建这两个对象的实例，然后当做参数传递给Servlet的service方法。</div><div><br></div><div>ServletRequest中封装了来自客户端的所有数据。这些数据包括，客户端IP地址，端口号，contentType，语言，键值对参数等等。</div><div><br></div><div>通常Servlet用于处理http协议，因此，传入到service方法中的参数往往是HttpServletRequest和<span style=\"line-height: 1.4;\">HttpServletResponse的实例。这两个类也都是接口，但是从继承关系来看，它们分别继承自</span><span style=\"line-height: 1.4;\">ServletRequest和ServletResponse。服务器的容器负责这两个参数的具体实现，比如Tomcat对</span><span style=\"line-height: 1.4;\">HttpServletRequest的实现是</span><span style=\"line-height: 1.4;\">org.apache.catalina.connector.Request类，Tomcat对开发者隐藏这些实现是为了遵守Servlet API标准，进而使Web应用可以跨平台。</span></div><div><span style=\"line-height: 1.4;\"><br></span></div><div><span style=\"line-height: 1.4;\"><br></span></div><div>ServletResponse提供了一些可以将数据返回到客户端的方法。该接口中的两个最常用的方法是getOutputStream()和getWriter()方法。<span style=\"line-height: 1.4;\"><br></span></div><div><br></div><div>getOutputStream()返回一个ServletOutputStream， Servlet的开发者可以使用该对应向客户端直接发送二进制数据。使用该方法，开发者还可以开发二进制文件的下载功能，比如音乐，视频，等。</div><div>getWriter()返回的是PrintWriter对象，使用该对象可以向客户端发送文本信息。</div>"
+      "data": "<h2>ServletRequest 和 ServletResponse</h2><div>这两个接口类型是对客户端请求与相应的抽象。</div><div>每次服务器接收到一个请求时，服务器容器就会创建这两个对象的实例，然后当做参数传递给Servlet的service方法。</div><div><br></div><div>ServletRequest中封装了来自客户端的所有数据。这些数据包括，客户端IP地址，端口号，contentType，语言，键值对参数等等。</div><div><br></div><div>通常Servlet用于处理http协议，因此，传入到service方法中的参数往往是HttpServletRequest和<span style=\"line-height: 1.4;\">HttpServletResponse的实例。这两个类也都是接口，但是从继承关系来看，它们分别继承自</span><span style=\"line-height: 1.4;\">ServletRequest和ServletResponse。服务器的容器负责这两个参数的具体实现，比如Tomcat对</span><span style=\"line-height: 1.4;\">HttpServletRequest的实现是</span><span style=\"line-height: 1.4;\">org.apache.catalina.connector.Request类，Tomcat对开发者隐藏这些实现是为了遵守Servlet API标准，进而使Web应用可以跨平台。</span></div><div><span style=\"line-height: 1.4;\"><br></span></div><div><span style=\"line-height: 1.4;\"><br></span></div><div>ServletResponse提供了一些可以将数据返回到客户端的方法。该接口中的两个最常用的方法是getOutputStream()和getWriter()方法。</div><div><ul><li><span style=\"line-height: 1.4;\"><code>getOutputStream()</code>返回一个javax.servlet.<code>ServletOutputStream</code>， Servlet的开发者可以使用该对应向客户端直接发送二进制数据。</span></li><ul><li><span style=\"line-height: 1.4;\">开发者可以使用该方法开发二进制文件的下载功能，比如音乐，视频，等。</span></li><li><span style=\"line-height: 1.4;\"><span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">ServletOutputStream</span>还提供了按照字符串写入的额外方法（<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">仅限于单字节字符</font>）。</span></li><li>它是个抽象类，Tomcat中实现该类的方法是<span style=\"font-family: Monaco; font-size: 11px; line-height: normal;\">org.apache.catalina.connector.CoyoteOutputStream（位于lib/catalina.jar）</span><span style=\"line-height: 1.4;\">。</span><br></li></ul><li><span style=\"line-height: 1.4;\"><code>getWriter()</code>返回的是<code>PrintWriter</code>对象，使用该对象可以向客户端发送文本信息。</span></li><ul><li><font face=\"Menlo, Consolas, Ubuntu Mono, Monaco, source-code-pro, monospace\"><span style=\"font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">它</span></font><span style=\"line-height: 1.4;\">所有的\"写\"方法均不抛出IO异常，查看是否需要调用<code>checkError()</code>方法。<br></span></li><li><span style=\"line-height: 1.4;\"><span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">它</span>的<code>autoFlush</code>属性被设置为<code>false</code>，但是它的作用仅仅是用于在执行<code>newLine</code>, <code>format</code>等方法时决定是否一并调用flush()方法。</span></li><ul><li><span style=\"line-height: 1.4;\">Tomcat中的实现类：<span style=\"font-family: Monaco; font-size: 11px; line-height: normal;\">org.apache.catalina.connector.CoyoteWriter</span></span><span style=\"line-height: 1.4;\">使用自身定义的缓存机制。</span></li></ul><li>该对象在构造时使用<code>getCharacterEncoding()</code>方法返回的字符集。</li></ul><li><span style=\"line-height: 1.4;\"><font>两个方法</font><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">不可以同时调用</font>。否则抛出<span style=\"color: rgb(0, 0, 0); line-height: normal; widows: 1;\"><code>java.lang.IllegalStateException</code></span><span style=\"line-height: 1.4;\">异常。</span><br></span></li><ul><li>先调用<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">getOutputStream()</span>再调用<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">getWriter()</span>，系统会告诉你已经调用过<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">getOutputStream()</span>了。</li><li>先调用<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">getWriter()</span>再调用<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">getOutputStream()</span>，系统会告诉你已经调用过<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">getWriter()</span>了。</li></ul></ul></div>"
     },
     {
       "type": "text",
@@ -96,7 +96,7 @@
     },
     {
       "type": "text",
-      "data": "<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">page</font></code>指令有很多属性可以设置：<div><ul><li>import 用于向JSP页面导入类，可以通过逗号分隔导入多个项目。<br></li><li>language 用于设置JSP页面的编程语言，目前仅有java可以设置。因此该属性可忽略。<br></li><li>extends 用于设置JSP的父类。<br></li><li>session=\"true|false\" 用于决定是否session数据在当前页面有效。默认为true，有效。<br></li><li>buffer=\"none|size in kb\" 用于决定JSP页面的输出流是否是buffered，默认为8kb。<br></li><li>autoFlush=”true|false” 用于决定JSP页面的输入流是否在缓存已满的情况下自动冲刷，默认为true。设置为false时导致缓存满时抛出异常。<br></li><li>isThreadSafe=\"true|false\" 告诉JSP引擎，该JSP是否是线程安全的。如果为true，JSP引擎会生成可以在同一时间处理多个请求的Servlet。默认为true。如果为false，生成的Servlet就会使用<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">单线程模式</font>。<br></li><li>info=\"text\" 用于JSP所生成的Servlet中的<code>public String getServletInfo()</code>方法。<br></li><li>errorPage=\"error_url\" 当异常抛出时转向的错误页面。<br></li><li>isErrorPage=\"true|false\" 将当前的JSP标记为专门用于显示错误（异常）的页面，默认false。<br></li><li>contentType=\"ctinfo\" 设置返回给客户端的MIME类型和字符集。<br></li></ul></div>"
+      "data": "<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">page</font></code>指令有很多属性可以设置：<div><ul><li>import 用于向JSP页面导入类，可以通过逗号分隔导入多个项目。<br></li><li>language 用于设置JSP页面的编程语言，目前仅有java可以设置。因此该属性可忽略。<br></li><li>extends 用于设置JSP的父类。<br></li><li>session=\"true|false\" 用于决定是否session数据在当前页面有效。默认为true，有效。<br></li><li>buffer=\"none|size in kb\" 用于决定JSP页面的输出流是否是buffered，默认为8kb。<br></li><li>autoFlush=”true|false” 用于决定JSP页面的输入流是否在缓存已满的情况下自动冲刷，默认为true。<br></li><ul><li>设置为false时，缓存满时抛出异常。因此要经常调用flush方法来冲刷缓存。<br></li><li><code>flush()</code>方法一旦被调用，<code>forward</code>，<code>redirect</code>等行为就会失效(页面上会正常显示已经冲刷过来的内容，但服务器端会报错)。</li></ul></ul><div>调节buffer会影响性能：<a href=\"http://stackoverflow.com/questions/10868281/optimal-buffer-size-for-jsps-and-autoflush-property\" style=\"line-height: 1.4;\">http://stackoverflow.com/questions/10868281/optimal-buffer-size-for-jsps-and-autoflush-property</a></div><ul><li>isThreadSafe=\"true|false\" 告诉JSP引擎，该JSP是否是线程安全的。如果为true，JSP引擎会生成可以在同一时间处理多个请求的Servlet。默认为true。如果为false，生成的Servlet就会使用<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">单线程模式</font>。<br></li><li>info=\"text\" 用于JSP所生成的Servlet中的<code>public String getServletInfo()</code>方法。<br></li><li>errorPage=\"error_url\" 当异常抛出时转向的错误页面。<br></li><li>isErrorPage=\"true|false\" 将当前的JSP标记为专门用于显示错误（异常）的页面，默认false。<br></li><li>contentType=\"ctinfo\" 设置返回给客户端的MIME类型和字符集。<br></li></ul></div>"
     },
     {
       "type": "text",
@@ -158,7 +158,7 @@
     },
     {
       "type": "text",
-      "data": "除了使用表达式标签以外，Tomcat 7中还可以使用EL表达式。EL表达式使开发者可以在当前页面中方便地访问以下4个范围内Java对象。<div><ol><li>pageScope ：&nbsp;</li><li>requestScope<br></li><li>sessionScope<br></li><li>applicationScope</li></ol></div><div>比如，如果你在<code>HttpServletRequest</code>中有一个<code>username</code>属性，那么在jsp页面上就可以使用<code>${requestScope.username}</code>来输出它的值。</div><div>此外，EL表达式还提供了对HttpServletRequest中常用属性的支持，比如：</div><div><ul><li><code>${param.NAME}</code>获取请求中某个参数的单一值。</li><li><code>${paramValues.NAME}</code>&nbsp;获取请求中某个参数的数组值。<br></li><li><code>${header.NAME}</code>获取请求中的某个header属性值。<br></li><li><code>${headerValues.NAME}</code>获取请求中的某个header数组值。<br></li><li><code>${cookie.NAME}</code>返回请求中所携带的其中某个cookie的<code>java.servlet.http.Cookie</code>对象。<br></li></ul><div>EL表达式还可以计算数学和逻辑表达式，比如：</div></div><div><ul><li><code>${1+2}&nbsp;</code>输出 3<br></li><li><code>${requestScope.username == sessionScope.loggedinuser} </code>输出 true 或者 false。<br></li><li><code>${requestScope.count &gt; 5} </code>输出 true 或者 false。</li><li><code>${!empty param.product_id} </code>测试param中是否存在<code>product_id</code>。<br></li></ul><div>EL表达式不仅仅可以用于直接向页面上输出值，还可以用于自定义标签。比如上一节中介绍的<code>if</code>标签。</div></div>"
+      "data": "除了使用表达式标签以外，Tomcat 7中还可以使用EL表达式。EL表达式使开发者可以在当前页面中方便地访问以下4个范围内Java对象。<div><ol><li>pageScope ：&nbsp;</li><li>requestScope<br></li><li>sessionScope<br></li><li>applicationScope</li></ol></div><div>比如，如果你在<code>HttpServletRequest</code>中有一个<code>username</code>属性，那么在jsp页面上就可以使用<code>${requestScope.username}</code>来输出它的值。</div><div>此外，EL表达式还提供了对HttpServletRequest中常用属性的支持，比如：</div><div><ul><li><code>${param.NAME}</code>获取请求中某个参数的单一值。</li><li><code>${paramValues.NAME}</code>&nbsp;获取请求中某个参数的数组值。<br></li><li><code>${header.NAME}</code>获取请求中的某个header属性值。<br></li><li><code>${headerValues.NAME}</code>获取请求中的某个header数组值。<br></li><li><code>${cookie.NAME}</code>返回请求中所携带的其中某个cookie的<code>java.servlet.http.Cookie</code>对象。<br></li></ul><div>EL表达式还可以计算数 学和逻辑表达式，比如：</div></div><div><ul><li><code>${1+2}&nbsp;</code>输出 3<br></li><li><code>${requestScope.username == sessionScope.loggedinuser} </code>输出 true 或者 false。<br></li><li><code>${requestScope.count &gt; 5} </code>输出 true 或者 false。</li><li><code>${!empty param.product_id} </code>测试param中是否存在<code>product_id</code>。<br></li></ul><div>EL表达式不仅仅可以用于直接向页面上输出值，还可以用于自定义标签。比如上一节中介绍的<code>if</code>标签。</div></div>"
     },
     {
       "type": "code",
@@ -176,7 +176,7 @@
     },
     {
       "type": "text",
-      "data": "<h3>JSP脚本内隐式对象</h3>除以上三种情况之外，在JSP脚本中，开发者还可以使用JSP隐式对象。这些对象都是JSP引擎在翻译JSP页面时插入到所生成的Servlet源代码中的，就如你自己定义过一样。<div><br></div><div><ul><li>out<br></li></ul><div>out是一个javax.servlet.jsp.JspWriter对象，用于向客户端写入字符数据。</div></div>"
+      "data": "<h3>JSP脚本内隐式对象</h3>除以上三种情况之外，在JSP脚本中，开发者还可以使用JSP隐式对象。这些对象都是JSP引擎在翻译JSP页面时插入到所生成的Servlet源代码中的，就如你自己定义过一样。<div><br></div><div><ul><li><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\"><code>out</code></font><br></li></ul><div>out是一个<code>javax.servlet.jsp.JspWriter</code>对象，用于向客户端写入字符数据。<span style=\"line-height: 1.4;\"><code>JspWriter</code>和同<code>PrintWriter</code>（通过response对象获取）的功能几乎一样，只不过：</span></div></div><div><ul><ul><li><code>JspWriter</code>的<font><code>print</code></font>方法都会抛出异常，但<code>PrintWriter</code>不会（前面有笔记）。</li></ul><ul><li>JSP页面上所有的HTML也都是通过该对象输出的，该行为通过查看JSP翻译成的Servlet便可知。</li><li><span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">JspWriter</span>使用JSP上page指令设置的buffer，autoFlush来管理其行为。</li><li>也是一个抽象类，在Tomcat中它的实现类是<code>org.apache.jasper.runtime.JspWriterImpl</code>(<code>CATALINA_HOME/lib/jasper.jar</code>)</li><ul><li>在JspWriterImpl中，它使用从response中获取的PrintWriter作为直接发送数据的手段。</li></ul></ul></ul></div>"
     },
     {
       "type": "code",
@@ -185,23 +185,51 @@
     },
     {
       "type": "text",
-      "data": ""
+      "data": "<ul><li><code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">request</font></code>和<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">response</font></code></li></ul><div>和HttpServlet的service方法参数中的<span style=\"line-height: 1.4;\">request和response一致，是同一个对象。</span></div><ul><li><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\"><code>page</code></font></li></ul><div>在JSP页面使用page相当于在具体的Servlet实现类中使用this。但是page被声明为Object类型。</div><div><ul><li><code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">config</font></code></li></ul><span style=\"line-height: 1.4;\">config 就是在Servlet中调用getServletConfig所返回的Servlet Config对象。在jsp页面测试 </span><code>config == getServletConfig() </code><span style=\"line-height: 1.4;\">时，返回</span><code>true</code><span style=\"line-height: 1.4;\">。</span><br></div><div>config的内容是在web.xml中配置的：</div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<servlet>\n\t  <servlet-name>HelloWordlServlet</servlet-name>\n\t  <jsp-file>/index.jsp</jsp-file>\n</servlet>\n\n<servlet-mapping> \n\t  <servlet-name>HelloWordlServlet</servlet-name> \n\t  <url-pattern>/index.jsp</url-pattern> \n</servlet-mapping> "
     },
     {
       "type": "text",
-      "data": ""
+      "data": "<ul><li>session</li></ul><div>session相当于调用request.getSession()</div><div><ul><li>application</li></ul><div>application 等同于 getServletContext()</div></div>"
     },
     {
       "type": "text",
-      "data": ""
+      "data": "<h2>JSP动作</h2><div>JSP动作是6个预定义的自定义标签，使用这些标签不需要使用taglib指令进行导入。</div><div><ul><li><span style=\"line-height: 1.4;\"><code>&lt;jsp:include&gt;</code></span><br></li></ul><div>include动作标签会在请求时动态导入某个静态或者动态的组件。</div></div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<jsp:include page=\"urlSpec\" flush=\"true\">\n    <jsp:param name=\"name\" value=\"value\"/>\n</jsp:include>"
     },
     {
       "type": "text",
-      "data": ""
+      "data": "<ul><li><span style=\"line-height: 1.4;\"><code>&lt;jsp:forward&gt;</code></span></li></ul><div>forward标签会执行一个服务器内部的请求分派。并可以在执行过程中传递参数。</div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<jsp:forward page=\"relativeURL\">\r\n    <jsp:param name=\"name\" value=\"value\"/>\r\n</jsp:forward>"
     },
     {
       "type": "text",
-      "data": ""
+      "data": "<h1>ServletContext</h1><div>部署在Tomcat中的每一个应用内部都有且只有一个ServletContext对象。在Servlet或者JSP页面中都可以通过API获取到该对象。</div><div>ServletContext对象可以通过ServletConfig对象获取到：</div>"
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "data": "getServletConfig().getServletContext()"
+    },
+    {
+      "type": "text",
+      "data": "GenericServlet中还对该调用定义了更为方便的方法："
+    },
+    {
+      "type": "text",
+      "data": "<p style=\"margin: 0px; font-size: 11px; line-height: normal; font-family: Monaco; color: rgb(119, 119, 119);\">@Override</p><p style=\"margin: 0px; font-size: 11px; line-height: normal; font-family: Monaco; color: rgb(119, 119, 119);\"><span style=\"color: rgb(147, 26, 104);\">public</span><span style=\"color: rgb(51, 51, 51);\"> ServletContext getServletContext() {</span></p>\n<p style=\"margin: 0px; font-size: 11px; line-height: normal; font-family: Monaco;\">&nbsp; &nbsp; <span style=\"color: #931a68\">return</span> getServletConfig().getServletContext();</p>\n<p style=\"margin: 0px; font-size: 11px; line-height: normal; font-family: Monaco;\">}</p>"
     },
     {
       "type": "text",
