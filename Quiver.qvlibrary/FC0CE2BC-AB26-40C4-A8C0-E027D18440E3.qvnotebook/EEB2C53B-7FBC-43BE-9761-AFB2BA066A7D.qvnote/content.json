@@ -3,7 +3,7 @@
   "cells": [
     {
       "type": "text",
-      "data": "至于Tomcat等一些服务器为什么使用Session就暂且不记了，这属于Session的发展历史。<div><br></div><div>Java Servlet API中代表Session的是<code>javax.servlet.http.HttpSession</code>类。每一个Servlet容器都需要给出相应的实现。</div><div>在Tomcat 7中这个实现类是：<code>org.apache.catalina.session.StandardSessionFacade</code><span style=\"color: rgb(0, 0, 0); font-family: -webkit-standard; font-size: medium;\">。</span></div><div><br></div><div>Session对象中包含一个唯一的ID信息，称作Session ID。这个ID用来标识某个用户的Session信息，它必须出现在每一个Http请求的Cookie里或者请求参数里。</div><div>默认情况下，Servlet容器使用Cookie跟踪Session，Cookie的名默认是JSESSIONID，不过可以在web.xml中更改。</div><div><br></div><div><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">如果浏览器禁用了Cookie，SessionID就必须以请求参数或者表单项的形式发送给服务器</font>。</div><div><br></div><div><br></div><div><br></div><div>下面是HttpSession的源代码：（摘自apache-tomcat-7.0.68）</div>"
+      "data": "至于Tomcat等一些服务器为什么使用Session就暂且不记了，这属于Session的发展历史。<div><br></div><div>Java Servlet API中代表Session的是<code>javax.servlet.http.HttpSession</code>类。每一个Servlet容器都需要给出相应的实现。</div><div>在Tomcat 7中这个实现类是：<code>org.apache.catalina.session.StandardSessionFacade</code><span style=\"color: rgb(0, 0, 0); font-family: -webkit-standard; font-size: medium;\">。</span></div><div><br></div><div>Session对象中包含一个唯一的ID信息，称作Session ID。这个ID用来标识某个用户的Session信息，它必须出现在每一个Http请求的Cookie里或者请求参数里。</div><div>默认情况下，Servlet容器使用Cookie跟踪Session，Cookie的名默认是JSESSIONID，不过可以在web.xml中更改。</div><div><br></div><div><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">如果浏览器禁用了Cookie，SessionID就必须以请求参数或者表单项的形式发送给服务器</font>。</div><div><br></div><div>下面是HttpSession的源代码：（摘自apache-tomcat-7.0.68）</div>"
     },
     {
       "type": "code",
@@ -22,6 +22,60 @@
     {
       "type": "text",
       "data": "session-timeout的单位是分钟，但是如果设置为-1的话，Session就永不失效。另外，通过调用Session对象的invalidate方法也可以使一个Session失效。<div><br></div><div><br></div>"
+    },
+    {
+      "type": "text",
+      "data": "<h1>Tomcat中的Session管理器</h1><div>Session管理器的接口类是org.apache.catalina.Manager。管理器负责生成并管理的Session的ID，以及后续的生命周期实现（创建，空置，失效）。除了基本的功能外，各个管理器的实现还会附带一些特定的功能。</div><div><br></div><div><i>源代码的注释中写道：管理器用来管理与特定容器相关联的Session池，不同的管理器实现可能会支持更有价值的特性，比如Session数据的持久化，或者为可分布式Web应用进行Session迁移</i>。</div><div><br></div><div>在没有任何设置的情况下，Tomcat使用的是<code>org.apache.catalina.session.StandardManager</code>实现类。<code>StandardManager</code>在Tomcat服务器正常关闭的时候将Session信息输出到硬盘上。服务器再次启动时这些回话数据会被重新加载并从硬盘上抹除。</div><div><ul><li>StandardManager仅仅保存没有失效的Session信息。<br></li><li>Session信息保存在<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">CATALINA_HOME</font>/work/Catalina/localhost/<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">CONTEXT</font>/SESSIONS.ser</code>文件中。</li></ul><div><br></div><div>Tomcat中使用的Session管理器配置在<code style=\"font-size: 11px;\"><span style=\"color: rgb(50, 50, 50); background-color: rgb(254, 250, 0);\">CATALINA_HOME</span>/conf/context.xml</code>文件中。默认情况下，Session管理器的设置是省略，Tomcat自动使用<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; background-color: rgba(0, 0, 0, 0.0392157);\">StandardManager</span>类作为Session管理器：</div></div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<?xml version='1.0' encoding='utf-8'?>\n\n<Context>\n\n    <!-- Default set of monitored resources -->\n    <WatchedResource>WEB-INF/web.xml</WatchedResource>\n\n    <!-- 默认情况下Session管理器的设置是被注释掉的 -->\n    <!--\n    <Manager pathname=\"\" />\n    -->\n\n</Context>"
+    },
+    {
+      "type": "text",
+      "data": "如果要改变<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; background-color: rgba(0, 0, 0, 0.0392157);\">StandardManager</span>类的默认行为，就需要将其明确配置出来。"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<Manager\n    className=\"org.apache.catalina.session.StandardManager\"\n    maxActiveSessions=\"-1\"\n    pathname=\"/var/sessiondata/mysessions.ser\"\n    sessionIdLength=\"32\">\n</Manager>"
+    },
+    {
+      "type": "text",
+      "data": "<ul><li>maxActiveSessions指定处于活动状态的Session数量，指定负数表示没有限制。<br></li><li>pathname指定输出Session数据的文件路径，该路径可以是绝对的，也可是相对的。相对路径参照的是app所对应的work目录。<br></li><li>sessionIdLength指定Session ID的字节长度。<br></li></ul>"
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
     },
     {
       "type": "text",
