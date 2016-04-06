@@ -12,7 +12,7 @@
     },
     {
       "type": "text",
-      "data": "Tomcat自带了几种Realm的实现，现在我们来研究其中的一些。<h1>MemoryRealm</h1><div><code>org.apache.catalina.realm.MemoryRealm</code>使用一个来自内存中的用户数据库。该用户数据库是服务器在启动时通过读取一个XML文件构造而成的。<br></div><div>XML文件的根元素是&lt;tomcat-users&gt;，里面可以有&nbsp;&lt;user&gt;子元素，其中包含了3个必须的属性：</div><div><ul><li>name : 用于验证的用户名。</li><li>password : 文本密码。</li><li>roles : 以逗号分隔的，用户所属的角色名，用于授予权限。</li></ul></div>"
+      "data": "激活Realm需要将&lt;Realm&gt;节点配置在<code>CATALINA_HOME/conf/server.xml</code>文件中，如果配置在&lt;Engine&gt;元素下，则所有虚拟主机上的所有应用都可以使用该Realm；如果配置在&lt;Host&gt;元素下，则仅有该虚拟主机下的应用才可以使用该Realm；最后，如果配置在&lt;Context&gt;元素下，那么仅有被指定的应用才可以使用该Realm。<br><div><br></div><div>一个应用仅可以激活一个Realm的实现，因此，配置到低级别容器上的Realm会覆盖掉配置到高级别容器上的Realm，配置到在&lt;Context&gt;元素下Realm拥有最高的优先级。<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">仅仅在server.xml中配置Realm是不够的，还需要在应用过的web.xml文件中显式声明对该Realm的使用才可以</font>。</div><div><br></div><div><br></div><div>Tomcat自带了几种Realm的实现，现在我们来研究其中的一些。<br><h1>MemoryRealm</h1><div><code>org.apache.catalina.realm.MemoryRealm</code>使用一个来自内存中的用户数据库。该用户数据库是服务器在启动时通过读取一个XML文件构造而成的。<br></div><div>XML文件的根元素是&lt;tomcat-users&gt;，里面可以有&nbsp;&lt;user&gt;子元素，其中包含了3个必须的属性：</div><div><ul><li>name : 用于验证的用户名。</li><li>password : 文本密码。</li><li>roles : 以逗号分隔的，用户所属的角色名，用于授予权限。</li></ul></div></div>"
     },
     {
       "type": "code",
@@ -21,7 +21,41 @@
     },
     {
       "type": "text",
-      "data": "<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">MemoryRealm</span>默认的path属性值为<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\"><code>conf/tomcat-users.xml</code></font>，也就是说它会读取<code>&lt;<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">CATALINA_HOME</font>&gt;/conf/tomcat-users.xml</code>，该行为可以改变。"
+      "data": "<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">MemoryRealm</span>默认的path属性值为<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\"><code>conf/tomcat-users.xml</code></font>，也就是说它会读取<code>&lt;<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">CATALINA_HOME</font>&gt;/conf/tomcat-users.xml</code>，该行为可以改变。<div><br></div><div>在server.xml中，将MemoryRealm配置到当前的chapter6应用上。</div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<Context path=\"/chapter6\" docBase=\"chapter6\">\n    <Realm className=\"org.apache.catalina.realm.MemoryRealm\" />\n</Context>"
+    },
+    {
+      "type": "text",
+      "data": "然后，编辑应用web.xml文件以引用该Realm："
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<web-app version=\"2.4\" xmlns=\"http://java.sun.com/xml/ns/j2ee\"\n    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n    xsi:schemaLocation=\"http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd\">\n  \n    <display-name>Chapter 6</display-name>\n    <description>Security Realms Demo</description>\n    \n    <security-constraint>\n        <web-resource-collection>\n            <web-resource-name>Memory Realm Sample</web-resource-name>\n            <url-pattern>/*</url-pattern>\n        </web-resource-collection>\n        \n        <auth-constraint>\n            <role-name>apressuser</role-name>\n        </auth-constraint>\n    </security-constraint>\n    \n    <login-config>\n        <auth-method>BASIC</auth-method>\n        <realm-name>Apress</realm-name>\n    </login-config>\n    \n</web-app>"
+    },
+    {
+      "type": "text",
+      "data": "总体来说，security-constraint中定义的是：访问的uri中凡是匹配 /* 的，都需要apressuser的role（角色）才可以。此外，<div><ul><li>我们定义了用户的登录验证方式为BASIC。在BASIC验证方式下，当访问服务器的限制资源时，服务器会发出需要登录的相应，浏览器继而弹出一个内置的登录页面来供用户登录以完成身份验证。此时用户可以输入账号密码，并以明文方式发送给服务器。服务器拿该账号密码与已配置的Realm中的数据进行比对。<br></li><li>&lt;realm-name&gt;节点中的文字会显示到用户浏览器的登录框中。<br></li><li>如果你输错了密码，该对话框会继续弹出，直到输入了服务器识别的数据。</li></ul><div>在Safari中该登录框是这样的：</div></div><div><img src=\"quiver-image-url/DC430A71EB80AECA147D853E96816B85.png\" alt=\"Screen Shot 2016-04-06 at 11.01.00 PM.png\"><br></div><div><br></div><h2>防暴力破解</h2><div><br></div><div><br></div><div><br></div><div><br></div>"
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
     },
     {
       "type": "text",
