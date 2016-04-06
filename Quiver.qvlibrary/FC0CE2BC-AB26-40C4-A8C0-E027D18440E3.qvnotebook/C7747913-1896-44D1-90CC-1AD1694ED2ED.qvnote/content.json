@@ -1,0 +1,119 @@
+{
+  "title": "第六章 配置Security Realms",
+  "cells": [
+    {
+      "type": "text",
+      "data": "Tomcat 中的Realm就是一些用户名，对应的密码，以及相应的角色定义的集合。Tomcat使用<code>org.apache.catalina.Realm</code>接口来对Realm进行抽象。该接口定义了一种可以将用户，密码，以及角色定义与Tomcat进行集成的机制。"
+    },
+    {
+      "type": "code",
+      "language": "java",
+      "data": "package org.apache.catalina;\r\n\r\nimport java.beans.PropertyChangeListener;\r\nimport java.io.IOException;\r\nimport java.security.Principal;\r\nimport java.security.cert.X509Certificate;\r\n\r\nimport org.apache.catalina.connector.Request;\r\nimport org.apache.catalina.connector.Response;\r\nimport org.apache.catalina.deploy.SecurityConstraint;\r\nimport org.ietf.jgss.GSSContext;\r\n\r\n/**\r\n * Realm是一种对用于授权个人用户的安全域的只读表观类。\r\n * Realm可以与任何级别上的容器进行关联，但多用于Context或者更高级别的容器。\r\n */\r\npublic interface Realm {\r\n\r\n\r\n    // ------------------------------------------------------------- Properties\r\n\r\n\r\n    /**\r\n     * Return the Container with which this Realm has been associated.\r\n     */\r\n    public Container getContainer();\r\n\r\n\r\n    /**\r\n     * Set the Container with which this Realm has been associated.\r\n     *\r\n     * @param container The associated Container\r\n     */\r\n    public void setContainer(Container container);\r\n\r\n\r\n    /**\r\n     * Return descriptive information about this Realm implementation and\r\n     * the corresponding version number, in the format\r\n     * <code>&lt;description&gt;/&lt;version&gt;</code>.\r\n     */\r\n    public String getInfo();\r\n\r\n\r\n    // --------------------------------------------------------- Public Methods\r\n\r\n    \r\n    /**\r\n     * Add a property change listener to this component.\r\n     *\r\n     * @param listener The listener to add\r\n     */\r\n    public void addPropertyChangeListener(PropertyChangeListener listener);\r\n\r\n\r\n    /**\r\n     * Return the Principal associated with the specified username and\r\n     * credentials, if there is one; otherwise return <code>null</code>.\r\n     *\r\n     * @param username Username of the Principal to look up\r\n     * @param credentials Password or other credentials to use in\r\n     *  authenticating this username\r\n     */\r\n    public Principal authenticate(String username, String credentials);\r\n\r\n\r\n    /**\r\n     * Return the Principal associated with the specified username, which\r\n     * matches the digest calculated using the given parameters using the\r\n     * method described in RFC 2069; otherwise return <code>null</code>.\r\n     *\r\n     * @param username Username of the Principal to look up\r\n     * @param digest Digest which has been submitted by the client\r\n     * @param nonce Unique (or supposedly unique) token which has been used\r\n     * for this request\r\n     * @param realm Realm name\r\n     * @param md5a2 Second MD5 digest used to calculate the digest :\r\n     * MD5(Method + \":\" + uri)\r\n     */\r\n    public Principal authenticate(String username, String digest,\r\n                                  String nonce, String nc, String cnonce,\r\n                                  String qop, String realm,\r\n                                  String md5a2);\r\n\r\n\r\n    /**\r\n     * Return the Principal associated with the specified {@link GSSContext}.\r\n     * If there is none, return <code>null</code>.\r\n     *\r\n     * @param gssContext The gssContext processed by the {@link Authenticator}.\r\n     * @param storeCreds Should the realm attempt to store the delegated\r\n     *                   credentials in the returned Principal?\r\n     */\r\n    public Principal authenticate(GSSContext gssContext, boolean storeCreds);\r\n\r\n\r\n    /**\r\n     * Return the Principal associated with the specified chain of X509\r\n     * client certificates.  If there is none, return <code>null</code>.\r\n     *\r\n     * @param certs Array of client certificates, with the first one in\r\n     *  the array being the certificate of the client itself.\r\n     */\r\n    public Principal authenticate(X509Certificate certs[]);\r\n\r\n\r\n    /**\r\n     * Execute a periodic task, such as reloading, etc. This method will be\r\n     * invoked inside the classloading context of this container. Unexpected\r\n     * throwables will be caught and logged.\r\n     */\r\n    public void backgroundProcess();\r\n\r\n\r\n    /**\r\n     * Return the SecurityConstraints configured to guard the request URI for\r\n     * this request, or <code>null</code> if there is no such constraint.\r\n     *\r\n     * @param request Request we are processing\r\n     */\r\n    public SecurityConstraint [] findSecurityConstraints(Request request,\r\n                                                     Context context);\r\n\r\n\r\n    /**\r\n     * Perform access control based on the specified authorization constraint.\r\n     * Return <code>true</code> if this constraint is satisfied and processing\r\n     * should continue, or <code>false</code> otherwise.\r\n     *\r\n     * @param request Request we are processing\r\n     * @param response Response we are creating\r\n     * @param constraint Security constraint we are enforcing\r\n     * @param context The Context to which client of this class is attached.\r\n     *\r\n     * @exception IOException if an input/output error occurs\r\n     */\r\n    public boolean hasResourcePermission(Request request,\r\n                                         Response response,\r\n                                         SecurityConstraint [] constraint,\r\n                                         Context context)\r\n        throws IOException;\r\n\r\n\r\n    /**\r\n     * Return <code>true</code> if the specified Principal has the specified\r\n     * security role, within the context of this Realm; otherwise return\r\n     * <code>false</code>.\r\n     *\r\n     * @param wrapper wrapper context for evaluating role\r\n     * @param principal Principal for whom the role is to be checked\r\n     * @param role Security role to be checked\r\n     */\r\n    public boolean hasRole(Wrapper wrapper, Principal principal, String role);\r\n\r\n        /**\r\n     * Enforce any user data constraint required by the security constraint\r\n     * guarding this request URI.  Return <code>true</code> if this constraint\r\n     * was not violated and processing should continue, or <code>false</code>\r\n     * if we have created a response already.\r\n     *\r\n     * @param request Request we are processing\r\n     * @param response Response we are creating\r\n     * @param constraint Security constraint being checked\r\n     *\r\n     * @exception IOException if an input/output error occurs\r\n     */\r\n    public boolean hasUserDataPermission(Request request,\r\n                                         Response response,\r\n                                         SecurityConstraint []constraint)\r\n        throws IOException;\r\n\r\n    /**\r\n     * Remove a property change listener from this component.\r\n     *\r\n     * @param listener The listener to remove\r\n     */\r\n    public void removePropertyChangeListener(PropertyChangeListener listener);\r\n\r\n\r\n}"
+    },
+    {
+      "type": "text",
+      "data": "Tomcat自带了几种Realm的实现，现在我们来研究其中的一些。<h1>MemoryRealm</h1><div><code>org.apache.catalina.realm.MemoryRealm</code>使用一个来自内存中的用户数据库。该用户数据库是服务器在启动时通过读取一个XML文件构造而成的。<br></div><div>XML文件的根元素是&lt;tomcat-users&gt;，里面可以有&nbsp;&lt;user&gt;子元素，其中包含了3个必须的属性：</div><div><ul><li>name : 用于验证的用户名。</li><li>password : 文本密码。</li><li>roles : 以逗号分隔的，用户所属的角色名，用于授予权限。</li></ul></div>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<tomcat-users>\r\n    <user name=\"tomcat\" password=\"tomcat\" roles=\"tomcat\" /> \r\n    <user name=\"role1\" password=\"tomcat\" roles=\"role1\" />\r\n    <user name=\"both\" password=\"tomcat\" roles=\"tomcat,role1\" />\r\n    <user name=\"bob\" password=\"password\" roles=\"apressuser\" />\r\n</tomcat-users>"
+    },
+    {
+      "type": "text",
+      "data": "<span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; line-height: 15px; background-color: rgba(0, 0, 0, 0.0392157);\">MemoryRealm</span>默认的path属性值为<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\"><code>conf/tomcat-users.xml</code></font>，也就是说它会读取<code>&lt;<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">CATALINA_HOME</font>&gt;/conf/tomcat-users.xml</code>，该行为可以改变。"
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    }
+  ]
+}
