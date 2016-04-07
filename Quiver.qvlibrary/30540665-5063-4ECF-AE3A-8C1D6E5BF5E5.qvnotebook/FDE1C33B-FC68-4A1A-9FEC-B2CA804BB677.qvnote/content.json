@@ -3,12 +3,57 @@
   "cells": [
     {
       "type": "text",
-      "data": "来自《Learning MySQL》<div><br></div><div>MySQL由“MySQL AB”开发，号称是“世界上最流行的开源数据库”。</div><div><br></div><div>文档：<a href=\"https://dev.mysql.com/doc/\" style=\"line-height: 1.4;\">https://dev.mysql.com/doc/</a></div><div><br></div><div>Mac</div><div>摘自官网：<a href=\"http://dev.mysql.com/doc/refman/5.7/en/osx-installation-pkg.html\" style=\"line-height: 1.4;\">http://dev.mysql.com/doc/refman/5.7/en/osx-installation-pkg.html</a></div><div>如果使用Mac OS的安装包DMG进行安装时，文件会被释放到<code>/usr/local</code>路径下。</div><div>比如，如果安装的是<code>mysql-5.7.13-osx10.9-x86_64.dmg</code>的话，MySQL就会被安装到<span style=\"font-size: 13.3488px; color: rgb(85, 85, 85); font-family: 'Open Sans', Arial, Helvetica, sans-serif; line-height: 23.3604px; widows: 1; background-color: rgb(255, 255, 255);\">&nbsp;</span><code>/usr/local/mysql-5.7.13-osx10.9-x86_64/</code><span style=\"line-height: 1.4;\">目录下。</span></div><div><br></div><div>安装过程中还会在<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">系统偏好设置</font>里安装<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">控制MySQL的启动和执行的控制面板</font>。（默认勾选）<span style=\"line-height: 1.4;\"><br></span></div><div><img src=\"quiver-image-url/745E7F1A390C25C42D1AA735D4B5F6FD.jpg\"><span style=\"line-height: 1.4;\"><br></span></div><div>安装完毕时：</div><div><ul><li><span style=\"line-height: 1.4;\">MySQL服务器不会默认启动。要启动它的话，要么在命令行执行</span><code>launchctl</code><span style=\"line-height: 1.4;\">，要么在控制面板进行操作。也可以使用</span><code>launchd</code><span style=\"line-height: 1.4;\">将其设置为自动启动。</span></li><li><span style=\"line-height: 1.4;\">安装器会将MySQL的root<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">密码显示在屏幕</font>上，该密码仅仅会提示一次。</span></li><li><span style=\"line-height: 1.4;\"><code>/usr/local</code>路径下会生成MySQL的安装目录以及<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">该目录的符号链接</font>：</span></li></ul></div>"
+      "data": "来自《Learning MySQL》<div><br></div><div>MySQL由“MySQL AB”开发，号称是“世界上最流行的开源数据库”。</div><div><br></div><div>文档：<a href=\"https://dev.mysql.com/doc/\" style=\"line-height: 1.4;\">https://dev.mysql.com/doc/</a></div><div><br></div><div>Mac</div><div>摘自官网：<a href=\"http://dev.mysql.com/doc/refman/5.7/en/osx-installation-pkg.html\" style=\"line-height: 1.4;\">http://dev.mysql.com/doc/refman/5.7/en/osx-installation-pkg.html</a></div><div>如果使用Mac OS的安装包DMG进行安装时，文件会被释放到<code>/usr/local</code>路径下。</div><div>比如，如果安装的是<code>mysql-5.7.13-osx10.9-x86_64.dmg</code>的话，MySQL就会被安装到<span style=\"font-size: 13.3488px; color: rgb(85, 85, 85); font-family: 'Open Sans', Arial, Helvetica, sans-serif; line-height: 23.3604px; widows: 1; background-color: rgb(255, 255, 255);\">&nbsp;</span><code>/usr/local/mysql-5.7.13-osx10.9-x86_64/</code><span style=\"line-height: 1.4;\">目录下。</span></div><div><br></div><div>安装过程中还会在<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">系统偏好设置</font>里安装<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">控制MySQL的启动和执行的控制面板</font>。（默认勾选）<span style=\"line-height: 1.4;\"><br></span></div><div><img src=\"quiver-image-url/745E7F1A390C25C42D1AA735D4B5F6FD.jpg\"><span style=\"line-height: 1.4;\"><br></span></div><div>安装完毕时：</div><div><ul><li><span style=\"line-height: 1.4;\">MySQL服务器不会默认启动。要启动它的话，要么在命令行执行</span><code>launchctl</code><span style=\"line-height: 1.4;\">，要么在控制面板进行操作。也可以使用</span><code>launchd</code><span style=\"line-height: 1.4;\">将其设置为自动启动。</span></li><li><span style=\"line-height: 1.4;\">安装器会将MySQL的root<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">密码显示在屏幕</font>上，该密码仅仅会提示一次。x*4jTw6bwsDg</span></li><li><span style=\"line-height: 1.4;\"><code>/usr/local</code>路径下会生成MySQL的安装目录以及<font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">该目录的符号链接</font>：</span></li></ul></div>"
     },
     {
       "type": "code",
       "language": "sh",
       "data": "Pans-MacBook-Pro:bin pan$ ls -al /usr/local\ntotal 8\ndrwxr-xr-x   5 root  wheel  204 Apr  7 18:56 .\ndrwxr-xr-x@ 10 root  wheel  374 Aug 20  2015 ..\ndrwxr-xr-x   2 root  wheel  374 Aug 20  2015 bin\ndrwxr-xr-x   2 root  wheel  102 Sep 29  2015 lib\nlrwxr-xr-x   1 root  wheel   27 Apr  7 18:56 mysql -> mysql-5.7.11-osx10.9-x86_64\ndrwxr-xr-x  10 root  wheel  408 Apr  7 18:56 mysql-5.7.11-osx10.9-x86_64"
+    },
+    {
+      "type": "text",
+      "data": "MySQL在安装完毕时会在<code class=\"filename\" style=\"box-sizing: inherit; padding-top: 0px; padding-bottom: 0px; border: 0px; outline: 0px; font-size: 13px; vertical-align: baseline; background-color: transparent; color: black; font-family: 'Courier New', Courier, fixed, monospace;\">/Library/LaunchDaemons/com.oracle.oss.mysql.mysqld.plist</code><span style=\"color: rgb(85, 85, 85); font-family: 'Open Sans', Arial, Helvetica, sans-serif; background-color: rgb(255, 255, 255);\">&nbsp;生成</span><span style=\"color: rgb(85, 85, 85); font-family: 'Open Sans', Arial, Helvetica, sans-serif; background-color: rgb(255, 255, 255);\">launchd文件，该文件的大致是：</span>"
+    },
+    {
+      "type": "code",
+      "language": "xml",
+      "data": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n    <key>Label</key>             <string>com.oracle.oss.mysql.mysqld</string>\n    <key>ProcessType</key>       <string>Interactive</string>\n    <key>Disabled</key>          <false/>\n    <key>RunAtLoad</key>         <true/>\n    <key>KeepAlive</key>         <true/>\n    <key>SessionCreate</key>     <true/>\n    <key>LaunchOnlyOnce</key>    <false/>\n    <key>UserName</key>          <string>_mysql</string>\n    <key>GroupName</key>         <string>_mysql</string>\n    <key>ExitTimeOut</key>       <integer>600</integer>\n    <key>Program</key>           <string>/usr/local/mysql/bin/mysqld</string>\n    <key>ProgramArguments</key>\n        <array>\n            <string>/usr/local/mysql/bin/mysqld</string>\n            <string>--user=_mysql</string>\n            <string>--basedir=/usr/local/mysql</string>\n            <string>--datadir=/usr/local/mysql/data</string>\n            <string>--plugin-dir=/usr/local/mysql/lib/plugin</string>\n            <string>--log-error=/usr/local/mysql/data/mysqld.local.err</string>\n            <string>--pid-file=/usr/local/mysql/data/mysqld.local.pid</string>\n        </array>\n    <key>WorkingDirectory</key>  <string>/usr/local/mysql</string>\n</dict>\n</plist>"
+    },
+    {
+      "type": "text",
+      "data": "所以你可以通过MySQL的控制面板启动，也可以通过加载上述<span style=\"color: rgb(85, 85, 85); font-family: 'Open Sans', Arial, Helvetica, sans-serif; background-color: rgb(255, 255, 255);\"><code>launchd</code>文件启动。例如：</span><div><pre class=\"programlisting\" style=\"box-sizing: inherit; margin-top: 20px; margin-bottom: 20px; margin-left: 6px; padding: 3px 8px; border: 1px solid rgb(217, 217, 217); outline: 0px; vertical-align: baseline; background-color: rgb(238, 238, 238); color: black; font-family: 'Courier New', Courier, fixed, monospace; overflow: auto; line-height: 1.5;\">shell&gt; cd /Library/LaunchDaemons\nshell&gt; sudo launchctl load -F com.oracle.oss.mysql.mysqld.plist</pre></div><div><font color=\"#555555\" face=\"Open Sans, Arial, Helvetica, sans-serif\"><span style=\"background-color: rgb(255, 255, 255);\">或者设置为开机启动：</span></font></div><div><pre class=\"programlisting\" style=\"box-sizing: inherit; margin-top: 20px; margin-bottom: 20px; margin-left: 6px; padding: 3px 8px; border: 1px solid rgb(217, 217, 217); outline: 0px; vertical-align: baseline; background-color: rgb(238, 238, 238); color: black; font-family: 'Courier New', Courier, fixed, monospace; overflow: auto; line-height: 1.5;\">shell&gt; sudo launchctl load -w com.oracle.oss.mysql.mysqld.plist</pre></div>"
+    },
+    {
+      "type": "text",
+      "data": "通过手动执行安装目录内的启动脚本也可以执行，比如：<div><span style=\"font-family: Menlo, Consolas, 'Ubuntu Mono', Monaco, source-code-pro, monospace; font-size: 11px; background-color: rgba(0, 0, 0, 0.0392157);\">sudo bin/mysqld_safe --user=_mysql &amp;</span><br></div><div><div><br></div></div><div><br></div>"
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
     },
     {
       "type": "text",
