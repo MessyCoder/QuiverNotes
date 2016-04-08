@@ -1,0 +1,9 @@
+{
+  "title": "密码相关",
+  "cells": [
+    {
+      "type": "text",
+      "data": "<div><span style=\"color: rgb(0, 0, 0); font-family: Arial; font-size: 14px; line-height: 26px; widows: 1; background-color: rgb(255, 255, 255);\">在一般用户账户丢失密码时，可以通过在root权限下，运行passwd &lt;username&gt;来重设&lt;username&gt;的密码。</span><br></div>"
+    }
+  ]
+}
