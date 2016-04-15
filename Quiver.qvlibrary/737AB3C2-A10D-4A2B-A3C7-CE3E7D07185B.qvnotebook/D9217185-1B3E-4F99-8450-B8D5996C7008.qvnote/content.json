@@ -1,0 +1,90 @@
+{
+  "title": "磁盘与分区",
+  "cells": [
+    {
+      "type": "text",
+      "data": "<h1><span style=\"line-height: 1.4;\">为什么有三个分区？</span></h1><div><span style=\"line-height: 1.4;\">使用虚拟机安装Ubuntu时，默认会将给定的磁盘进行分区。进入系统后使用下面的</span><font color=\"#323232\" style=\"line-height: 1.4; background-color: rgb(254, 250, 0);\"><code>fdisk</code></font><span style=\"line-height: 1.4;\">可以查看系统的分区情况：</span><br></div>"
+    },
+    {
+      "type": "code",
+      "language": "sh",
+      "data": "sudo fdisk -l /dev/sda"
+    },
+    {
+      "type": "text",
+      "data": "于是发现系统有：<div><img src=\"quiver-image-url/8A25B353370D573389BE1F07CB9C3DAF.png\" alt=\"Screen Shot 2016-04-15 at 5.06.40 PM.png\"><br></div><div><ul><li>/dev/sda1</li><li>/dev/sda2</li><li>/dev/sda5</li></ul><div>三个分区。注意到另外<span style=\"line-height: 1.4;\">三个特点：</span></div></div><div><ol><li><code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">sda1</font></code>的start不是从0开始的，但是接近0。这证明该区是主分区。</li><li><code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">sda2</font></code>与<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">sda1</font></code>几乎相连，但是没有重复的地方，这证明该分区是扩展分区，也就是逻辑分区的容器。</li><li>不难想象，<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">sda5</font></code>肯定处于<code><font color=\"#323232\" style=\"background-color: rgb(254, 250, 0);\">sda2</font></code>之内，看看它的start与end就知道，这证明该分区是逻辑分区。在System一列可以看到，它的类型是Linux swap，因此该分区用作虚拟内存。</li></ol><div>注意：磁盘设备的分区命名中，1-4用于给1主分区和3个位置的扩展分区命名。（有些操作系统限制只能有一个扩展分区，所以会经常看到1，2，5的组合。）</div></div><div>↓</div><div>磁盘的第一扇区的中记录了引导程序和分区表，其中分区表的大小仅有64字节，最多能配置4个分区。</div><div><br></div>"
+    },
+    {
+      "type": "text",
+      "data": "<h1>fdisk命令</h1><div>fdisk使用来查看某个磁盘分区表的命令。</div><div>比如：</div><div>sudo fdisk &nbsp;/dev/sda</div><div><br></div><div>然后输入 命令回车，就可执行响应的操作，例如</div><div><br></div><div><span style=\"line-height: 1.4;\">p ： 打印分区表。start 和 end的单位是“扇区”</span></div><div><img src=\"quiver-image-url/A2F632D1FBF8A96D0D98AD192F650F40.png\" alt=\"Screen Shot 2016-04-15 at 5.31.43 PM.png\" style=\"line-height: 1.4;\"></div><div><span style=\"line-height: 1.4;\">&nbsp;</span></div><div><span style=\"line-height: 1.4;\">n ： 新建分区。可以按照提示进行操作。</span></div><div><span style=\"line-height: 1.4;\"><br></span></div><div><span style=\"line-height: 1.4;\">d ： 删除一个分区。</span></div><div><span style=\"line-height: 1.4;\"><br></span></div><div><span style=\"line-height: 1.4;\">q ： 退出不保存。</span></div><div><span style=\"line-height: 1.4;\"><br></span></div><div><span style=\"line-height: 1.4;\">w ： 将修改写入分区表，保存并退出。</span></div><div><div><br></div></div><div>该命令貌似不能修改分区的大小。只能删除或者添加。</div>"
+    },
+    {
+      "type": "text",
+      "data": "<h1>df命令</h1><div>该命令用于列出指定或全部的分区使用量信息。一般要加上h，使得结果以GB，MB，KB等易读的方式显示出来。</div><div><img src=\"quiver-image-url/2E714564CEB0D67E300A2DFFFDD86C46.png\" alt=\"Screen Shot 2016-04-15 at 5.51.15 PM.png\"><br></div><div><br></div>"
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    },
+    {
+      "type": "text",
+      "data": ""
+    }
+  ]
+}
