@@ -1,0 +1,9 @@
+{
+  "title": "sqlplus",
+  "cells": [
+    {
+      "type": "text",
+      "data": "每一个sqlplus会话都会连接一个数据库（除非这是一个NOLOG会话）<div><br></div><div>使用sqlplus会涉及到三个环境变量：ORACLE_SID ORACLE_HOME 和 LD_LIBRARY_PATH （有时候NLS_LANG and ORA_NLS11也需要设置）</div><div><br></div><div><br></div>"
+    }
+  ]
+}
