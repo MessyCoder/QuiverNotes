@@ -1,0 +1,7 @@
+
+jQuery
+ JavaScript既存のAPIを使いやすくようにする。
+ 
+AngularJS
+ Browser側でMVCのフレームワークを立ち上げる。
+
